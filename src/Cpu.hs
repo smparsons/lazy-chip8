@@ -1,6 +1,7 @@
 module Cpu
 ( Chip8(..),
   executeOpcode00E0,
+  executeOpcode00EE,
   executeOpcode2NNN,
   executeOpcode8XY4
 ) where
@@ -25,6 +26,18 @@ data Chip8 = Chip8 {
 
 executeOpcode00E0 :: Chip8 -> Chip8 
 executeOpcode00E0 chip8State = chip8State { graphics = V.replicate 2048 0x00 }
+
+executeOpcode00EE :: Chip8 -> Chip8
+executeOpcode00EE chip8State =
+  chip8State {
+    stack = V.init originalStack, 
+    stackPointer = originalStackPointer - 1,
+    programCounter = lastAddress + 2
+  }
+  where 
+    originalStack = stack chip8State
+    originalStackPointer = stackPointer chip8State
+    lastAddress = V.last originalStack
 
 executeOpcode2NNN :: Chip8 -> Chip8 
 executeOpcode2NNN chip8State = 

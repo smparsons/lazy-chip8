@@ -34,6 +34,26 @@ spec = do
       let expectedGraphics = V.replicate 2048 0x0
       updatedGraphics `shouldBe` expectedGraphics
 
+  describe "executeOpcode00EE" $ do
+    let initialState = defaultState {
+      stackPointer = 2,
+      stack = V.fromList [0x150, 0x2F2],
+      programCounter = 0x316
+    }
+    let resultingState = executeOpcode00EE initialState
+
+    it "removes the last address from the stack" $ do
+      let latestAddressInStack = V.last $ stack resultingState 
+      latestAddressInStack `shouldBe` 0x150
+
+    it "decrements the stack pointer" $ do
+      let resultingStackLength = V.length $ stack resultingState
+      resultingStackLength `shouldBe` 1
+
+    it "returns from the subroutine" $ do
+      let resultingProgramCounter = programCounter resultingState 
+      resultingProgramCounter `shouldBe` 0x2F4
+
   describe "executeOpcode2NNN" $ do
     let initialState = defaultState { 
       currentOpcode = 0x225F,
