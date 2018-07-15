@@ -54,6 +54,17 @@ spec = do
       let resultingProgramCounter = programCounter resultingState 
       resultingProgramCounter `shouldBe` 0x2F4
 
+  describe "executeOpcode1NNN" $ do
+    let initialState = defaultState {
+      currentOpcode = 0x11EF,
+      programCounter = 0x3FF
+    }
+    let resultingState = executeOpcode1NNN initialState 
+
+    it "jumps to address 1NN" $ do
+      let currentProgramCounter = programCounter resultingState 
+      currentProgramCounter `shouldBe` 0x1EF
+
   describe "executeOpcode2NNN" $ do
     let initialState = defaultState { 
       currentOpcode = 0x225F,

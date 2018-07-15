@@ -2,6 +2,7 @@ module Cpu
 ( Chip8(..),
   executeOpcode00E0,
   executeOpcode00EE,
+  executeOpcode1NNN,
   executeOpcode2NNN,
   executeOpcode8XY4
 ) where
@@ -38,6 +39,15 @@ executeOpcode00EE chip8State =
     originalStack = stack chip8State
     originalStackPointer = stackPointer chip8State
     lastAddress = V.last originalStack
+
+executeOpcode1NNN :: Chip8 -> Chip8 
+executeOpcode1NNN chip8State = 
+  chip8State { 
+    programCounter = newAddress
+  }
+  where 
+    opcode = currentOpcode chip8State
+    newAddress = opcode .&. 0x0FFF
 
 executeOpcode2NNN :: Chip8 -> Chip8 
 executeOpcode2NNN chip8State = 
