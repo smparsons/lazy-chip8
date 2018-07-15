@@ -1,35 +1,55 @@
 module Cpu
 ( Chip8(..),
-  executeOpcode2NNN 
+  executeOpcode2NNN,
+  executeOpcode8XY4
 ) where
 
 import Data.Word
 import Data.Bits
+import qualified Data.Vector as V
 
 data Chip8 = Chip8 {
   currentOpcode :: Word16,
-  memory :: [Word8],
-  vRegisters :: [Word8],
+  memory :: V.Vector Word8,
+  vRegisters :: V.Vector Word8,
   indexRegister :: Word16,
   programCounter :: Word16,
-  graphics :: [Word8],
+  graphics :: V.Vector Word8,
   delayTimer :: Word8,
   soundTimer :: Word8,
-  stack :: [Word16],
+  stack :: V.Vector Word16,
   stackPointer :: Word16,
-  keyState :: [Word8]
+  keyState :: V.Vector Word8
 } deriving (Show, Eq)
 
 executeOpcode2NNN :: Chip8 -> Chip8 
 executeOpcode2NNN chip8State = 
   chip8State { 
-    stack = originalStack ++ [originalProgramCounter], 
+    stack = V.snoc originalStack originalProgramCounter, 
     stackPointer = originalStackPointer + 1, 
-    programCounter = (.&.) originalOpcode 0x0FFF
+    programCounter = opcode .&. 0x0FFF
   }
   where 
-    originalOpcode = currentOpcode chip8State
+    opcode = currentOpcode chip8State
     originalStack = stack chip8State 
     originalStackPointer = stackPointer chip8State 
     originalProgramCounter = programCounter chip8State 
+    
+executeOpcode8XY4 :: Chip8 -> Chip8
+executeOpcode8XY4 chip8State = 
+  chip8State {
+    vRegisters = V.update originalVRegisters $ V.fromList [(registerX,total),(0xF,carry)],
+    programCounter = originalProgramCounter + 2
+  }
+  where
+    originalVRegisters = vRegisters chip8State 
+    originalProgramCounter = programCounter chip8State
+    opcode = currentOpcode chip8State
+    registerX = (fromIntegral $ shiftR (opcode .&. 0x0F00) 8) :: Int
+    registerY = (fromIntegral $ shiftR (opcode .&. 0x00F0) 4) :: Int
+    registerXValue = originalVRegisters V.! registerX
+    registerYValue = originalVRegisters V.! registerY
+    total = registerXValue + registerYValue
+    carry = if registerYValue > (0xFF - registerXValue) then 0x1 else 0x0
+
     
