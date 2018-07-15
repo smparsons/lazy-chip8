@@ -25,9 +25,11 @@ data Chip8 = Chip8 {
   keyState :: V.Vector Word8
 } deriving (Show, Eq)
 
+--0x00E0
 clearScreen :: Chip8 -> Chip8 
 clearScreen chip8State = chip8State { graphics = V.replicate 2048 0x00 }
 
+--0x00EE
 returnFromSubroutine :: Chip8 -> Chip8
 returnFromSubroutine chip8State =
   chip8State {
@@ -40,6 +42,7 @@ returnFromSubroutine chip8State =
     originalStackPointer = stackPointer chip8State
     lastAddress = V.last originalStack
 
+--0x1NNN
 jumpToAddress :: Chip8 -> Chip8 
 jumpToAddress chip8State = 
   chip8State { 
@@ -49,6 +52,7 @@ jumpToAddress chip8State =
     opcode = currentOpcode chip8State
     newAddress = opcode .&. 0x0FFF
 
+--0x2NNN
 callSubroutine :: Chip8 -> Chip8 
 callSubroutine chip8State = 
   chip8State { 
@@ -62,6 +66,7 @@ callSubroutine chip8State =
     originalStackPointer = stackPointer chip8State 
     originalProgramCounter = programCounter chip8State 
     
+--0x8XY4
 addTwoRegisterValues :: Chip8 -> Chip8
 addTwoRegisterValues chip8State = 
   chip8State {
