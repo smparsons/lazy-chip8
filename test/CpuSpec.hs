@@ -13,7 +13,7 @@ defaultState = Chip8 {
   vRegisters = V.replicate 16 0x00,
   indexRegister = 0x0000,
   programCounter = 0x0000,
-  graphics = V.empty,
+  graphics = V.replicate 2048 0x00,
   delayTimer = 0x00,
   soundTimer = 0x00,
   stack = V.empty,
@@ -23,6 +23,17 @@ defaultState = Chip8 {
 
 spec :: Spec
 spec = do
+  describe "executeOpcode00E0" $ do
+    let initialState = defaultState {
+      graphics = V.replicate 2048 0x1
+    }
+    let resultingState = executeOpcode00E0 initialState
+
+    it "clears the screen" $ do
+      let updatedGraphics = graphics resultingState
+      let expectedGraphics = V.replicate 2048 0x0
+      updatedGraphics `shouldBe` expectedGraphics
+
   describe "executeOpcode2NNN" $ do
     let initialState = defaultState { 
       currentOpcode = 0x225F,

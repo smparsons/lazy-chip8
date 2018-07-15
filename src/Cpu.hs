@@ -1,5 +1,6 @@
 module Cpu
 ( Chip8(..),
+  executeOpcode00E0,
   executeOpcode2NNN,
   executeOpcode8XY4
 ) where
@@ -21,6 +22,9 @@ data Chip8 = Chip8 {
   stackPointer :: Word16,
   keyState :: V.Vector Word8
 } deriving (Show, Eq)
+
+executeOpcode00E0 :: Chip8 -> Chip8 
+executeOpcode00E0 chip8State = chip8State { graphics = V.replicate 2048 0x00 }
 
 executeOpcode2NNN :: Chip8 -> Chip8 
 executeOpcode2NNN chip8State = 
