@@ -1,10 +1,10 @@
 module Cpu
 ( Chip8(..),
-  executeOpcode00E0,
-  executeOpcode00EE,
-  executeOpcode1NNN,
-  executeOpcode2NNN,
-  executeOpcode8XY4
+  clearScreen,
+  returnFromSubroutine,
+  jumpToAddress,
+  callSubroutine,
+  addTwoRegisterValues
 ) where
 
 import Data.Word
@@ -25,11 +25,11 @@ data Chip8 = Chip8 {
   keyState :: V.Vector Word8
 } deriving (Show, Eq)
 
-executeOpcode00E0 :: Chip8 -> Chip8 
-executeOpcode00E0 chip8State = chip8State { graphics = V.replicate 2048 0x00 }
+clearScreen :: Chip8 -> Chip8 
+clearScreen chip8State = chip8State { graphics = V.replicate 2048 0x00 }
 
-executeOpcode00EE :: Chip8 -> Chip8
-executeOpcode00EE chip8State =
+returnFromSubroutine :: Chip8 -> Chip8
+returnFromSubroutine chip8State =
   chip8State {
     stack = V.init originalStack, 
     stackPointer = originalStackPointer - 1,
@@ -40,8 +40,8 @@ executeOpcode00EE chip8State =
     originalStackPointer = stackPointer chip8State
     lastAddress = V.last originalStack
 
-executeOpcode1NNN :: Chip8 -> Chip8 
-executeOpcode1NNN chip8State = 
+jumpToAddress :: Chip8 -> Chip8 
+jumpToAddress chip8State = 
   chip8State { 
     programCounter = newAddress
   }
@@ -49,8 +49,8 @@ executeOpcode1NNN chip8State =
     opcode = currentOpcode chip8State
     newAddress = opcode .&. 0x0FFF
 
-executeOpcode2NNN :: Chip8 -> Chip8 
-executeOpcode2NNN chip8State = 
+callSubroutine :: Chip8 -> Chip8 
+callSubroutine chip8State = 
   chip8State { 
     stack = V.snoc originalStack originalProgramCounter, 
     stackPointer = originalStackPointer + 1, 
@@ -62,8 +62,8 @@ executeOpcode2NNN chip8State =
     originalStackPointer = stackPointer chip8State 
     originalProgramCounter = programCounter chip8State 
     
-executeOpcode8XY4 :: Chip8 -> Chip8
-executeOpcode8XY4 chip8State = 
+addTwoRegisterValues :: Chip8 -> Chip8
+addTwoRegisterValues chip8State = 
   chip8State {
     vRegisters = V.update originalVRegisters $ V.fromList [(registerX,total),(0xF,carry)],
     programCounter = originalProgramCounter + 2

@@ -23,24 +23,24 @@ defaultState = Chip8 {
 
 spec :: Spec
 spec = do
-  describe "executeOpcode00E0" $ do
+  describe "clearScreen" $ do
     let initialState = defaultState {
       graphics = V.replicate 2048 0x1
     }
-    let resultingState = executeOpcode00E0 initialState
+    let resultingState = clearScreen initialState
 
     it "clears the screen" $ do
       let updatedGraphics = graphics resultingState
       let expectedGraphics = V.replicate 2048 0x0
       updatedGraphics `shouldBe` expectedGraphics
 
-  describe "executeOpcode00EE" $ do
+  describe "returnFromSubroutine" $ do
     let initialState = defaultState {
       stackPointer = 2,
       stack = V.fromList [0x150, 0x2F2],
       programCounter = 0x316
     }
-    let resultingState = executeOpcode00EE initialState
+    let resultingState = returnFromSubroutine initialState
 
     it "removes the last address from the stack" $ do
       let latestAddressInStack = V.last $ stack resultingState 
@@ -54,25 +54,25 @@ spec = do
       let resultingProgramCounter = programCounter resultingState 
       resultingProgramCounter `shouldBe` 0x2F4
 
-  describe "executeOpcode1NNN" $ do
+  describe "jumpToAddress" $ do
     let initialState = defaultState {
       currentOpcode = 0x11EF,
       programCounter = 0x3FF
     }
-    let resultingState = executeOpcode1NNN initialState 
+    let resultingState = jumpToAddress initialState 
 
     it "jumps to address 1NN" $ do
       let currentProgramCounter = programCounter resultingState 
       currentProgramCounter `shouldBe` 0x1EF
 
-  describe "executeOpcode2NNN" $ do
+  describe "callSubroutine" $ do
     let initialState = defaultState { 
       currentOpcode = 0x225F,
       stackPointer = 1,
       stack = V.fromList [0x210],
       programCounter = 0x220
     }
-    let resultingState = executeOpcode2NNN initialState
+    let resultingState = callSubroutine initialState
 
     it "stores the current address in the stack" $ do
       let latestAddressInStack = V.last $ stack resultingState
@@ -90,7 +90,7 @@ spec = do
       let resultingProgramCounter = programCounter resultingState
       resultingProgramCounter `shouldBe` 0x25F 
 
-  describe "executeOpcode8XY4" $ do
+  describe "addTwoRegisterValues" $ do
     let originalVRegisters = vRegisters defaultState
 
     context "without carry" $ do
@@ -99,7 +99,7 @@ spec = do
         vRegisters = V.update originalVRegisters $ V.fromList [(0x3,0x5A),(0xC,0x13)],
         programCounter = 0x260
       } 
-      let resultingState = executeOpcode8XY4 initialState
+      let resultingState = addTwoRegisterValues initialState
       let resultingVRegisters = vRegisters resultingState
 
       it "adds register y to register x" $ do
@@ -120,7 +120,7 @@ spec = do
         vRegisters = V.update originalVRegisters $ V.fromList [(0xB,0xC3),(0x4,0xB2)],
         programCounter = 0x3A1
       } 
-      let resultingState = executeOpcode8XY4 initialState
+      let resultingState = addTwoRegisterValues initialState
       let resultingVRegisters = vRegisters resultingState
 
       it "adds register y to register x" $ do
