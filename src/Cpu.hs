@@ -25,8 +25,6 @@ data Chip8 = Chip8 {
   keyState :: V.Vector Word8
 } deriving (Show, Eq)
 
---test comment
-
 --0x00E0
 clearScreen :: Chip8 -> Chip8 
 clearScreen chip8State = chip8State { graphics = V.replicate 2048 0x00 }
