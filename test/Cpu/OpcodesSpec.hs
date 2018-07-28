@@ -1,9 +1,9 @@
-module CpuSpec 
+module Cpu.OpcodesSpec 
 ( spec
 ) where
 
 import Test.Hspec
-import Cpu
+import Cpu.Opcodes
 import qualified Data.Vector as V
 
 defaultState :: Chip8

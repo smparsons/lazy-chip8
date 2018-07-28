@@ -1,4 +1,4 @@
-module Cpu
+module Cpu.Opcodes
 ( Chip8(..),
   clearScreen,
   returnFromSubroutine,
