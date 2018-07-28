@@ -90,7 +90,94 @@ spec = do
       let resultingProgramCounter = programCounter resultingState
       resultingProgramCounter `shouldBe` 0x25F 
 
-  describe "addTwoRegisterValues" $ do
+  describe "registerEqualsConstant" $ do
+    let originalVRegisters = vRegisters defaultState
+    
+    context "register and constant are equal" $ do
+      let initialState = defaultState {
+        currentOpcode = 0x3530,
+        vRegisters = V.update originalVRegisters $ V.fromList [(0x5,0x30)],
+        programCounter = 0x250
+      }
+
+      let resultingState = registerEqualsConstant initialState
+      
+      it "skips the next instruction" $ do
+        let updatedProgramCounter = programCounter resultingState
+        updatedProgramCounter `shouldBe` 0x254
+
+    context "register and constant are not equal" $ do
+      let initialState = defaultState {
+        currentOpcode = 0x3A21,
+        vRegisters = V.update originalVRegisters $ V.fromList [(0xA, 0x5F)],
+        programCounter = 0x250
+      }
+
+      let resultingState = registerEqualsConstant initialState 
+
+      it "continues to the next instruction" $ do
+        let updatedProgramCounter = programCounter resultingState 
+        updatedProgramCounter `shouldBe` 0x252
+
+  describe "registerDoesNotEqualConstant" $ do
+    let originalVRegisters = vRegisters defaultState
+    
+    context "register and constant are equal" $ do
+      let initialState = defaultState {
+        currentOpcode = 0x3530,
+        vRegisters = V.update originalVRegisters $ V.fromList [(0x5,0x30)],
+        programCounter = 0x250
+      }
+
+      let resultingState = registerDoesNotEqualConstant initialState
+      
+      it "continues to the next instruction" $ do
+        let updatedProgramCounter = programCounter resultingState
+        updatedProgramCounter `shouldBe` 0x252
+
+    context "register and constant are not equal" $ do
+      let initialState = defaultState {
+        currentOpcode = 0x3A21,
+        vRegisters = V.update originalVRegisters $ V.fromList [(0xA, 0x5F)],
+        programCounter = 0x250
+      }
+
+      let resultingState = registerDoesNotEqualConstant initialState 
+
+      it "skips the next instruction" $ do
+        let updatedProgramCounter = programCounter resultingState 
+        updatedProgramCounter `shouldBe` 0x254
+
+  describe "registersAreEqual" $ do
+    let originalVRegisters = vRegisters defaultState
+
+    context "register x and y are equal" $ do
+      let initialState = defaultState {
+        currentOpcode = 0x5AC0,
+        vRegisters = V.update originalVRegisters $ V.fromList [(0xA, 0x2C), (0xC, 0x2C)],
+        programCounter = 0x3A0
+      }
+
+      let resultingState = registersAreEqual initialState
+
+      it "skips the next instruction" $ do
+        let updatedProgramCounter = programCounter resultingState
+        updatedProgramCounter `shouldBe` 0x3A4
+
+    context "register x and y are not equal" $ do
+      let initialState = defaultState {
+        currentOpcode = 0x5350,
+        vRegisters = V.update originalVRegisters $ V.fromList [(0x3, 0x11), (0x5, 0x2B)],
+        programCounter = 0x3A0
+      }
+
+      let resultingState = registersAreEqual initialState
+
+      it "continues to the next instruction" $ do
+        let updatedProgramCounter = programCounter resultingState
+        updatedProgramCounter `shouldBe` 0x3A2
+
+  describe "addTwoRegisters" $ do
     let originalVRegisters = vRegisters defaultState
 
     context "without carry" $ do
@@ -99,7 +186,7 @@ spec = do
         vRegisters = V.update originalVRegisters $ V.fromList [(0x3,0x5A),(0xC,0x13)],
         programCounter = 0x260
       } 
-      let resultingState = addTwoRegisterValues initialState
+      let resultingState = addTwoRegisters initialState
       let resultingVRegisters = vRegisters resultingState
 
       it "adds register y to register x" $ do
@@ -120,7 +207,7 @@ spec = do
         vRegisters = V.update originalVRegisters $ V.fromList [(0xB,0xC3),(0x4,0xB2)],
         programCounter = 0x3A1
       } 
-      let resultingState = addTwoRegisterValues initialState
+      let resultingState = addTwoRegisters initialState
       let resultingVRegisters = vRegisters resultingState
 
       it "adds register y to register x" $ do
