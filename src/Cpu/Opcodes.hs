@@ -14,6 +14,8 @@ import Data.Word
 import Data.Bits
 import qualified Data.Vector as V
 
+import Cpu.Helpers
+
 data Chip8 = Chip8 {
   currentOpcode :: Word16,
   memory :: V.Vector Word8,
@@ -84,8 +86,7 @@ registerEqualsConstant chip8State =
     originalProgramCounter = programCounter chip8State
     originalVRegisters = vRegisters chip8State 
     opcode = currentOpcode chip8State
-    registerX = (fromIntegral $ shiftR (opcode .&. 0x0F00) 8) :: Int
-    registerXValue = originalVRegisters V.! registerX
+    registerXValue = getRegisterXValue opcode originalVRegisters
     constant = (fromIntegral $ opcode .&. 0x00FF) :: Word8
 
 --0x4XNN
@@ -100,8 +101,7 @@ registerDoesNotEqualConstant chip8State =
     originalProgramCounter = programCounter chip8State
     originalVRegisters = vRegisters chip8State 
     opcode = currentOpcode chip8State
-    registerX = (fromIntegral $ shiftR (opcode .&. 0x0F00) 8) :: Int
-    registerXValue = originalVRegisters V.! registerX
+    registerXValue = getRegisterXValue opcode originalVRegisters
     constant = (fromIntegral $ opcode .&. 0x00FF) :: Word8
 
 --0x5XY0
@@ -116,10 +116,8 @@ registersAreEqual chip8State =
     originalProgramCounter = programCounter chip8State
     originalVRegisters = vRegisters chip8State 
     opcode = currentOpcode chip8State
-    registerX = (fromIntegral $ shiftR (opcode .&. 0x0F00) 8) :: Int
-    registerXValue = originalVRegisters V.! registerX
-    registerY = (fromIntegral $ shiftR (opcode .&. 0x00F0) 4) :: Int
-    registerYValue = originalVRegisters V.! registerY
+    registerXValue = getRegisterXValue opcode originalVRegisters
+    registerYValue = getRegisterYValue opcode originalVRegisters
 
 --0x8XY4
 addTwoRegisters :: Chip8 -> Chip8
@@ -132,8 +130,8 @@ addTwoRegisters chip8State =
     originalVRegisters = vRegisters chip8State 
     originalProgramCounter = programCounter chip8State
     opcode = currentOpcode chip8State
-    registerX = (fromIntegral $ shiftR (opcode .&. 0x0F00) 8) :: Int
-    registerY = (fromIntegral $ shiftR (opcode .&. 0x00F0) 4) :: Int
+    registerX = parseRegisterXNumber opcode
+    registerY = parseRegisterYNumber opcode
     registerXValue = originalVRegisters V.! registerX
     registerYValue = originalVRegisters V.! registerY
     total = registerXValue + registerYValue
