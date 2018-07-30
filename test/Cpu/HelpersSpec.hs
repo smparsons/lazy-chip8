@@ -37,3 +37,17 @@ spec = do
     it "returns the value stored in register Y" $ do
       let registerYValue = getRegisterYValue initialOpcode initialVRegisters 
       registerYValue `shouldBe` 0x1F
+
+  describe "parseTwoDigitConstant" $ do
+    let initialOpcode = 0x5A27
+    
+    it "returns the last two digits from the opcode" $ do
+      let constant = parseTwoDigitConstant initialOpcode
+      constant `shouldBe` 0x27
+
+  describe "parseThreeDigitConstant" $ do
+    let initialOpcode = 0x4AC3
+
+    it "returns the last three digits from the opcode" $ do
+      let constant = parseThreeDigitConstant initialOpcode 
+      constant `shouldBe` 0xAC3

@@ -7,6 +7,7 @@ module Cpu.Opcodes
   registerEqualsConstant,
   registerDoesNotEqualConstant,
   registersAreEqual,
+  setRegisterToConstant,
   addTwoRegisters
 ) where
 
@@ -87,7 +88,7 @@ registerEqualsConstant chip8State =
     originalVRegisters = vRegisters chip8State 
     opcode = currentOpcode chip8State
     registerXValue = getRegisterXValue opcode originalVRegisters
-    constant = (fromIntegral $ opcode .&. 0x00FF) :: Word8
+    constant = parseTwoDigitConstant opcode
 
 --0x4XNN
 registerDoesNotEqualConstant :: Chip8 -> Chip8
@@ -102,7 +103,7 @@ registerDoesNotEqualConstant chip8State =
     originalVRegisters = vRegisters chip8State 
     opcode = currentOpcode chip8State
     registerXValue = getRegisterXValue opcode originalVRegisters
-    constant = (fromIntegral $ opcode .&. 0x00FF) :: Word8
+    constant = parseTwoDigitConstant opcode
 
 --0x5XY0
 registersAreEqual :: Chip8 -> Chip8
@@ -118,6 +119,20 @@ registersAreEqual chip8State =
     opcode = currentOpcode chip8State
     registerXValue = getRegisterXValue opcode originalVRegisters
     registerYValue = getRegisterYValue opcode originalVRegisters
+
+--0x6XNN
+setRegisterToConstant :: Chip8 -> Chip8 
+setRegisterToConstant chip8State =
+  chip8State {
+    vRegisters = V.update originalVRegisters $ V.fromList [(registerX,constant)],
+    programCounter = originalProgramCounter + programCounterIncrement
+  }
+  where 
+    originalVRegisters = vRegisters chip8State
+    originalProgramCounter = programCounter chip8State
+    opcode = currentOpcode chip8State 
+    registerX = parseRegisterXNumber opcode 
+    constant = parseTwoDigitConstant opcode
 
 --0x8XY4
 addTwoRegisters :: Chip8 -> Chip8
