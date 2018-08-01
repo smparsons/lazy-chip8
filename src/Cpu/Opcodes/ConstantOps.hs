@@ -1,5 +1,6 @@
 module Cpu.Opcodes.ConstantOps
-( setRegisterToConstant
+( setRegisterToConstant,
+  addConstantToRegister
 ) where
 
 import qualified Data.Vector as V
@@ -21,3 +22,19 @@ setRegisterToConstant chip8State =
     opcode = currentOpcode chip8State 
     registerX = parseRegisterXNumber opcode 
     constant = parseTwoDigitConstant opcode
+
+--7XNN
+addConstantToRegister :: Chip8 -> Chip8
+addConstantToRegister chip8State =
+  chip8State {
+    vRegisters = V.update originalVRegisters $ V.fromList[(registerX,total)],
+    programCounter = originalProgramCounter + programCounterIncrement
+  }
+  where
+    originalVRegisters = vRegisters chip8State
+    originalProgramCounter = programCounter chip8State
+    opcode = currentOpcode chip8State
+    registerX = parseRegisterXNumber opcode
+    registerXValue = getRegisterXValue opcode originalVRegisters
+    constant = parseTwoDigitConstant opcode
+    total = registerXValue + constant

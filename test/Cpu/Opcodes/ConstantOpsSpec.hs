@@ -30,3 +30,23 @@ spec = do
     it "increments the program counter" $ do
       let updatedProgramCounter = programCounter resultingState 
       updatedProgramCounter `shouldBe` 0x182
+
+  describe "addConstantToRegister" $ do
+    let originalVRegisters = vRegisters defaultState
+
+    let initialState = defaultState {
+      currentOpcode = 0x7EA2,
+      vRegisters = V.update originalVRegisters $ V.fromList [(0xE, 0x15)],
+      programCounter = 0x210
+    }
+
+    let resultingState = addConstantToRegister initialState
+
+    it "adds constant to register" $ do
+      let resultingVRegisters = vRegisters resultingState
+      let register = resultingVRegisters V.! 0xE
+      register `shouldBe` 0xB7
+
+    it "increments the program counter" $ do
+      let updatedProgramCounter = programCounter resultingState
+      updatedProgramCounter `shouldBe` 0x212
