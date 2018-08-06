@@ -20,6 +20,7 @@ library
     Cpu.Opcodes.Display,
     Cpu.Opcodes.Flow,
     Cpu.Opcodes.Math,
+    Cpu.Opcodes.Memory,
     Cpu.Opcodes.Timer,
     Cpu.Constants,
     Cpu.Helpers,
@@ -52,6 +53,7 @@ test-suite hspec
       Cpu.Opcodes.DisplaySpec,
       Cpu.Opcodes.FlowSpec,
       Cpu.Opcodes.MathSpec,
+      Cpu.Opcodes.MemorySpec,
       Cpu.Opcodes.TimerSpec,
       Cpu.HelpersSpec,
       Cpu.TestHelpers
