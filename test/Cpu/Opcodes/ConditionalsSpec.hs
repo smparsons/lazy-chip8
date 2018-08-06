@@ -97,3 +97,32 @@ spec = do
       it "continues to the next instruction" $ do
         let updatedProgramCounter = programCounter resultingState
         updatedProgramCounter `shouldBe` 0x3A2
+
+  describe "registersAreNotEqual" $ do
+    let originalVRegisters = vRegisters defaultState
+
+    context "register x and y are equal" $ do
+      let initialState = defaultState {
+        currentOpcode = 0x9C20,
+        vRegisters = V.update originalVRegisters $ V.fromList [(0xC, 0x25),(0x2, 0x25)],
+        programCounter = 0x355
+      }
+
+      let resultingState = registersAreNotEqual initialState
+
+      it "continues to the next instruction" $ do
+        let updatedProgramCounter = programCounter resultingState
+        updatedProgramCounter `shouldBe` 0x357
+
+    context "register x and y are not equal" $ do
+      let initialState = defaultState {
+        currentOpcode = 0x93B0,
+        vRegisters = V.update originalVRegisters $ V.fromList [(0x3, 0x5A),(0xB, 0x71)],
+        programCounter = 0x355
+      }
+
+      let resultingState = registersAreNotEqual initialState
+
+      it "skips the next instruction" $ do
+        let updatedProgramCounter = programCounter resultingState
+        updatedProgramCounter `shouldBe` 0x359
