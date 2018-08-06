@@ -54,7 +54,7 @@ registersAreEqual chip8State =
     registerXValue = getRegisterXValue opcode originalVRegisters
     registerYValue = getRegisterYValue opcode originalVRegisters
 
---9XY0
+--0x9XY0
 registersAreNotEqual :: Chip8 -> Chip8 
 registersAreNotEqual chip8State =
   chip8State {   
