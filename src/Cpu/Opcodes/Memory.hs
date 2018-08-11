@@ -1,8 +1,11 @@
 module Cpu.Opcodes.Memory
 ( setIndexRegisterToAddress,
-  addRegisterToIndexRegister
+  addRegisterToIndexRegister,
+  registerDump,
+  registerLoad
 ) where
 
+import qualified Data.Vector as V
 import Data.Word
 
 import Cpu.Helpers
@@ -35,3 +38,30 @@ addRegisterToIndexRegister chip8State =
     indexRegisterValue = indexRegister chip8State
     registerXValue = getRegisterXValue opcode originalVRegisters
     convertedRegisterXValue = fromIntegral registerXValue :: Word16
+
+--0xFX55
+registerDump :: Chip8 -> Chip8 
+registerDump chip8State =
+  chip8State {
+    memory = V.update originalMemory registerValuesToLoad,
+    programCounter = originalProgramCounter + programCounterIncrement 
+  }
+  where 
+    originalVRegisters = vRegisters chip8State
+    originalProgramCounter = programCounter chip8State
+    originalMemory = memory chip8State
+    opcode = currentOpcode chip8State 
+    indexRegisterValue = indexRegister chip8State 
+    registerXNumber = parseRegisterXNumber opcode
+    numberOfRegisterValuesToSlice = registerXNumber + 1
+    registersToProcess = V.slice 0 numberOfRegisterValuesToSlice originalVRegisters
+    registerValuesToLoad = 
+      V.imap 
+        (\index registerValue -> 
+          let convertedAddress = (fromIntegral indexRegisterValue :: Int) in 
+            (convertedAddress + index, registerValue))
+        registersToProcess
+
+--0xFX65
+registerLoad :: Chip8 -> Chip8
+registerLoad = undefined
