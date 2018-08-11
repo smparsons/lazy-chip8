@@ -71,10 +71,38 @@ spec = do
 
     it "updates memory at address I through address I + X" $ do
       let updatedMemory = memory resultingState 
-      let numberOfBytesToSlice = 8 --Since X is 7, and we want register 0 through 7 inclusive.
+      let numberOfBytesToSlice = 8
       let updatedMemorySlice = V.toList $ V.slice 0x1AC numberOfBytesToSlice updatedMemory 
       updatedMemorySlice `shouldMatchList` [0x13,0x2A,0x5C,0x4D,0x3C,0xAD,0xBC,0x54]
 
     it "increments the program counter" $ do
       let updatedProgramCounter = programCounter resultingState
       updatedProgramCounter `shouldBe` 0x3CE
+
+  describe "registerLoad" $ do
+    let originalMemory = memory defaultState
+
+    let initialState = defaultState {
+      currentOpcode = 0xF565,
+      indexRegister = 0x20C,
+      memory = V.update originalMemory $ V.fromList
+        [ (0x20C,0x7A)
+        , (0x20D,0xC1)
+        , (0x20E,0x3B)
+        , (0x20F,0x11)
+        , (0x210,0x9C)
+        , (0x211,0xDE) ],
+      programCounter = 0x13F
+    }
+
+    let resultingState = registerLoad initialState
+
+    it "updates registers 0 through X with values in memory at address I through I + X" $ do
+      let updatedRegisters = vRegisters resultingState
+      let numberOfRegistersToSlice = 6
+      let updatedRegistersSlice = V.toList $ V.slice 0 numberOfRegistersToSlice updatedRegisters
+      updatedRegistersSlice `shouldMatchList` [0x7A,0xC1,0x3B,0x11,0x9C,0xDE]
+
+    it "increments the program counter" $ do
+      let updatedProgramCounter = programCounter resultingState
+      updatedProgramCounter `shouldBe` 0x141

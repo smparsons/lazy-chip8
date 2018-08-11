@@ -43,7 +43,7 @@ addRegisterToIndexRegister chip8State =
 registerDump :: Chip8 -> Chip8 
 registerDump chip8State =
   chip8State {
-    memory = V.update originalMemory registerValuesToLoad,
+    memory = V.update originalMemory registerValuesToDump,
     programCounter = originalProgramCounter + programCounterIncrement 
   }
   where 
@@ -55,7 +55,7 @@ registerDump chip8State =
     registerXNumber = parseRegisterXNumber opcode
     numberOfRegisterValuesToSlice = registerXNumber + 1
     registersToProcess = V.slice 0 numberOfRegisterValuesToSlice originalVRegisters
-    registerValuesToLoad = 
+    registerValuesToDump = 
       V.imap 
         (\index registerValue -> 
           let convertedAddress = (fromIntegral indexRegisterValue :: Int) in 
@@ -64,4 +64,19 @@ registerDump chip8State =
 
 --0xFX65
 registerLoad :: Chip8 -> Chip8
-registerLoad = undefined
+registerLoad chip8State =
+  chip8State {
+    vRegisters = V.update originalVRegisters memoryValuesToLoad,
+    programCounter = originalProgramCounter + programCounterIncrement
+  }
+  where 
+    originalVRegisters = vRegisters chip8State
+    originalProgramCounter = programCounter chip8State
+    originalMemory = memory chip8State
+    opcode = currentOpcode chip8State
+    indexRegisterValue = indexRegister chip8State
+    registerXNumber = parseRegisterXNumber opcode
+    numberOfMemoryValuesToSlice = registerXNumber + 1
+    convertedIndexRegisterValue = fromIntegral indexRegisterValue :: Int
+    memoryValuesToProcess = V.slice convertedIndexRegisterValue numberOfMemoryValuesToSlice originalMemory
+    memoryValuesToLoad = V.imap (\index memoryValue -> (index, memoryValue)) memoryValuesToProcess
