@@ -18,5 +18,5 @@ defaultState = Chip8 {
   soundTimer = 0x00,
   stack = V.empty,
   stackPointer = 0x0000,
-  keyState = V.empty
+  keyState = V.replicate 16 0x00
 }
