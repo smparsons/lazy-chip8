@@ -1,14 +1,17 @@
 module Cpu.Opcodes.Flow
 ( returnFromSubroutine,
   jumpToAddress,
-  callSubroutine
+  callSubroutine,
+  jumpToAddressPlusRegisterZero
 ) where
 
 import Data.Bits
+import Data.Word
 import qualified Data.Vector as V
 
 import Cpu.Types
 import Cpu.Constants
+import Cpu.Helpers
 
 --0x00EE
 returnFromSubroutine :: Chip8 -> Chip8
@@ -31,7 +34,7 @@ jumpToAddress chip8State =
   }
   where 
     opcode = currentOpcode chip8State
-    newAddress = opcode .&. 0x0FFF
+    newAddress = parseThreeDigitConstant opcode 
 
 --0x2NNN
 callSubroutine :: Chip8 -> Chip8 
@@ -46,3 +49,17 @@ callSubroutine chip8State =
     originalStack = stack chip8State 
     originalStackPointer = stackPointer chip8State 
     originalProgramCounter = programCounter chip8State 
+
+--0xBNNN
+jumpToAddressPlusRegisterZero :: Chip8 -> Chip8 
+jumpToAddressPlusRegisterZero chip8State =
+  chip8State { 
+    programCounter = newAddress
+  }
+  where 
+    opcode = currentOpcode chip8State
+    originalVRegisters = vRegisters chip8State 
+    constant = parseThreeDigitConstant opcode
+    registerZeroValue = originalVRegisters V.! 0x0
+    convertedRegisterValue = (fromIntegral registerZeroValue) :: Word16
+    newAddress = constant + convertedRegisterValue

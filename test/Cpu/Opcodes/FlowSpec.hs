@@ -38,7 +38,7 @@ spec = do
     }
     let resultingState = jumpToAddress initialState 
 
-    it "jumps to address 1NN" $ do
+    it "jumps to address NNN" $ do
       let currentProgramCounter = programCounter resultingState 
       currentProgramCounter `shouldBe` 0x1EF
 
@@ -66,3 +66,17 @@ spec = do
     it "jumps to the given address" $ do
       let resultingProgramCounter = programCounter resultingState
       resultingProgramCounter `shouldBe` 0x25F 
+
+  describe "jumpToAddressPlusRegisterZero" $ do 
+    let originalVRegisters = vRegisters defaultState
+
+    let initialState = defaultState {
+      currentOpcode = 0xB1FA,
+      vRegisters = V.update originalVRegisters $ V.fromList [(0x0,0x51)],
+      programCounter = 0x12A
+    }
+    let resultingState = jumpToAddressPlusRegisterZero initialState 
+
+    it "jumps to address NNN + V0" $ do
+      let currentProgramCounter = programCounter resultingState 
+      currentProgramCounter `shouldBe` 0x24B
