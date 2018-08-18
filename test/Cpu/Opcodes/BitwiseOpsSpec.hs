@@ -70,3 +70,53 @@ spec = do
     it "increments the program counter" $ do
       let updatedProgramCounter = programCounter resultingState
       updatedProgramCounter `shouldBe` 0x27E
+
+  describe "shiftRight" $ do
+    let originalVRegisters = vRegisters defaultState
+
+    let initialState = defaultState {
+      currentOpcode = 0x8746,
+      vRegisters = V.update originalVRegisters $ V.fromList [(0x7,0x3F),(0x4,0x1C),(0xF,0x1)],
+      programCounter = 0x223
+    }
+
+    let resultingState = shiftRight initialState
+    let resultingVRegisters = vRegisters resultingState 
+
+    it "assigns register x to the result of doing a right bit shift on register y's value" $ do
+      let register = resultingVRegisters V.! 0x7
+      register `shouldBe` 0x0E
+
+    it "assigns the least significant bit to the carry register before the bit shift" $ do
+      let register = resultingVRegisters V.! 0xF
+      register `shouldBe` 0x0
+
+    it "increments the program counter" $ do
+      let updatedProgramCounter = programCounter resultingState
+      updatedProgramCounter `shouldBe` 0x225
+
+  describe "shiftLeft" $ do
+    let originalVRegisters = vRegisters defaultState
+
+    let initialState = defaultState {
+      currentOpcode = 0x8C1E,
+      vRegisters = V.update originalVRegisters $ V.fromList [(0xC,0x2F),(0x1,0xEA),(0xF,0x0)],
+      programCounter = 0x11A
+    }
+
+    let resultingState = shiftLeft initialState
+    let resultingVRegisters = vRegisters resultingState
+
+    it "assigns register x and y to the result of doing a left bit shift on register y's value" $ do
+      let registerX = resultingVRegisters V.! 0xC
+      let registerY = resultingVRegisters V.! 0x1
+      registerX `shouldBe` 0xD4
+      registerY `shouldBe` 0xD4
+
+    it "assigns the most significant bit to the carry register before the bit shift" $ do
+      let register = resultingVRegisters V.! 0xF
+      register `shouldBe` 0x1
+
+    it "increments the program counter" $ do
+      let updatedProgramCounter = programCounter resultingState
+      updatedProgramCounter `shouldBe` 0x11C
