@@ -55,3 +55,94 @@ spec = do
       it "increases program counter by 2" $ do
         let resultingProgramCounter = programCounter resultingState 
         resultingProgramCounter `shouldBe` 0x3A3
+
+  describe "subtractRegister" $ do
+    let originalVRegisters = vRegisters defaultState
+
+    context "without borrow" $ do
+      let initialState = defaultState {
+        currentOpcode = 0x8145,  
+        vRegisters = V.update originalVRegisters $ V.fromList [(0x1,0x74),(0x4,0x3B)],
+        programCounter = 0x4C0
+      } 
+
+      let resultingState = subtractRegister initialState
+      let resultingVRegisters = vRegisters resultingState
+
+      it "subtracts register y from register x" $ do
+        let difference = resultingVRegisters V.! 0x1
+        difference `shouldBe` 0x39
+
+      it "sets carry register to 1" $ do
+        let carry = resultingVRegisters V.! 0xF
+        carry `shouldBe` 0x1
+
+      it "increases program counter by 2" $ do
+        let resultingProgramCounter = programCounter resultingState 
+        resultingProgramCounter `shouldBe` 0x4C2
+
+    context "with borrow" $ do
+      let initialState = defaultState {
+        currentOpcode = 0x8CA5,  
+        vRegisters = V.update originalVRegisters $ V.fromList [(0xC,0x25),(0xA,0x5C)],
+        programCounter = 0x7CB
+      } 
+      let resultingState = subtractRegister initialState
+      let resultingVRegisters = vRegisters resultingState
+
+      it "subtracts register y from register x" $ do
+        let difference = resultingVRegisters V.! 0xC
+        difference `shouldBe` 0xC9
+
+      it "sets carry register to 0" $ do
+        let carry = resultingVRegisters V.! 0xF
+        carry `shouldBe` 0x0
+
+      it "increases program counter by 2" $ do
+        let resultingProgramCounter = programCounter resultingState 
+        resultingProgramCounter `shouldBe` 0x7CD
+
+  describe "subtractTwoRegisters" $ do
+    let originalVRegisters = vRegisters defaultState
+
+    context "without borrow" $ do
+      let initialState = defaultState {
+        currentOpcode = 0x8AE7,  
+        vRegisters = V.update originalVRegisters $ V.fromList [(0xA,0x43),(0xE,0x8B)],
+        programCounter = 0x4B5
+      } 
+      let resultingState = subtractTwoRegisters initialState
+      let resultingVRegisters = vRegisters resultingState
+
+      it "subtracts register x from reigster y" $ do
+        let difference = resultingVRegisters V.! 0xA
+        difference `shouldBe` 0x48
+
+      it "sets carry register to 1" $ do
+        let carry = resultingVRegisters V.! 0xF
+        carry `shouldBe` 0x1
+
+      it "increases program counter by 2" $ do
+        let resultingProgramCounter = programCounter resultingState 
+        resultingProgramCounter `shouldBe` 0x4B7
+
+    context "with borrow" $ do
+      let initialState = defaultState {
+        currentOpcode = 0x8C27,  
+        vRegisters = V.update originalVRegisters $ V.fromList [(0xC,0x98),(0x2,0x4F)],
+        programCounter = 0x6AA
+      } 
+      let resultingState = subtractTwoRegisters initialState
+      let resultingVRegisters = vRegisters resultingState
+
+      it "subtracts register x from reigster y" $ do
+        let difference = resultingVRegisters V.! 0xC
+        difference `shouldBe` 0xB7
+
+      it "sets carry register to 0" $ do
+        let carry = resultingVRegisters V.! 0xF
+        carry `shouldBe` 0x0
+
+      it "increases program counter by 2" $ do
+        let resultingProgramCounter = programCounter resultingState 
+        resultingProgramCounter `shouldBe` 0x6AC
