@@ -2,7 +2,8 @@ module Cpu.Opcodes.Memory
 ( setIndexRegisterToAddress,
   addRegisterToIndexRegister,
   registerDump,
-  registerLoad
+  registerLoad,
+  storeBCD
 ) where
 
 import qualified Data.Vector as V
@@ -80,3 +81,22 @@ registerLoad chip8State =
     convertedIndexRegisterValue = fromIntegral indexRegisterValue :: Int
     memoryValuesToProcess = V.slice convertedIndexRegisterValue numberOfMemoryValuesToSlice originalMemory
     memoryValuesToLoad = V.imap (\index memoryValue -> (index, memoryValue)) memoryValuesToProcess
+
+--0xFX33
+storeBCD :: Chip8 -> Chip8
+storeBCD chip8State =
+  chip8State {
+    memory = V.update originalMemory $ V.fromList
+      [ (convertedIndexValue, registerXValue `div` 100)
+      , (convertedIndexValue + 1, (registerXValue `div` 10) `mod` 10)
+      , (convertedIndexValue + 2, (registerXValue `mod` 100) `mod` 10) ],
+    programCounter = originalProgramCounter + programCounterIncrement
+  }
+  where 
+    originalVRegisters = vRegisters chip8State
+    originalProgramCounter = programCounter chip8State
+    originalMemory = memory chip8State
+    opcode = currentOpcode chip8State
+    indexRegisterValue = indexRegister chip8State
+    convertedIndexValue = fromIntegral indexRegisterValue :: Int
+    registerXValue = getRegisterXValue opcode originalVRegisters

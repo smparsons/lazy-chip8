@@ -106,3 +106,25 @@ spec = do
     it "increments the program counter" $ do
       let updatedProgramCounter = programCounter resultingState
       updatedProgramCounter `shouldBe` 0x141
+
+  describe "storeBCD" $ do
+    let originalVRegisters = vRegisters defaultState
+
+    let initialState = defaultState {
+      currentOpcode = 0xF733,
+      indexRegister = 0x17B,
+      vRegisters = V.update originalVRegisters $ V.fromList [(0x7,0xAF)],
+      programCounter = 0x232
+    }
+
+    let resultingState = storeBCD initialState
+
+    it "updates memory at location I, I + 1, and I + 2 with the BCD representation of register X" $ do
+      let updatedMemory = memory resultingState
+      let numberOfBytesToSlice = 3
+      let updatedMemorySlice = V.toList $ V.slice 0x17B numberOfBytesToSlice updatedMemory
+      updatedMemorySlice `shouldMatchList` [0x1,0x7,0x5]
+
+    it "increments the program counter" $ do
+      let updatedProgramCounter = programCounter resultingState
+      updatedProgramCounter `shouldBe` 0x234
