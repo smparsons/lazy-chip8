@@ -3,7 +3,8 @@ module Cpu.Opcodes.Memory
   addRegisterToIndexRegister,
   registerDump,
   registerLoad,
-  storeBCD
+  storeBCD,
+  storeSpriteLocation
 ) where
 
 import qualified Data.Vector as V
@@ -100,3 +101,17 @@ storeBCD chip8State =
     indexRegisterValue = indexRegister chip8State
     convertedIndexValue = fromIntegral indexRegisterValue :: Int
     registerXValue = getRegisterXValue opcode originalVRegisters
+
+--0xFX29
+storeSpriteLocation :: Chip8 -> Chip8 
+storeSpriteLocation chip8State =
+  chip8State {
+    indexRegister = spriteLocation,
+    programCounter = originalProgramCounter + programCounterIncrement
+  }
+  where 
+    originalVRegisters = vRegisters chip8State
+    originalProgramCounter = programCounter chip8State
+    opcode = currentOpcode chip8State
+    registerXValue = getRegisterXValue opcode originalVRegisters
+    spriteLocation = (fromIntegral $ registerXValue  * 0x5) :: Word16

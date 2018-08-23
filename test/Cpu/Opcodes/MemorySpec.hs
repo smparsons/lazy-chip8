@@ -128,3 +128,23 @@ spec = do
     it "increments the program counter" $ do
       let updatedProgramCounter = programCounter resultingState
       updatedProgramCounter `shouldBe` 0x234
+
+  describe "storeSpriteLocation" $ do
+    let originalVRegisters = vRegisters defaultState
+
+    let initialState = defaultState {
+      currentOpcode = 0xF529,
+      indexRegister = 0x213,
+      vRegisters = V.update originalVRegisters $ V.fromList [(0x5,0xA)],
+      programCounter = 0x240
+    }
+
+    let resultingState = storeSpriteLocation initialState
+
+    it "updates I to the location of the 4x5 font representation of the character in X" $ do
+      let updatedIndexRegisterValue = indexRegister resultingState
+      updatedIndexRegisterValue `shouldBe` 0x32
+
+    it "increments the program counter" $ do
+      let updatedProgramCounter = programCounter resultingState
+      updatedProgramCounter `shouldBe` 0x242
