@@ -16,5 +16,6 @@ data Chip8 = Chip8 {
   soundTimer :: Word8,
   stack :: V.Vector Word16,
   stackPointer :: Word16,
-  keyState :: V.Vector Word8
+  keyState :: V.Vector Word8,
+  drawFlag :: Bool
 } deriving (Show, Eq)
