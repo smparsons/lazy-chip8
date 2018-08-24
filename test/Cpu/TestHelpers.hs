@@ -2,6 +2,7 @@ module Cpu.TestHelpers
 ( defaultState
 ) where
 
+import System.Random 
 import qualified Data.Vector as V
 
 import Cpu.Types
@@ -19,5 +20,6 @@ defaultState = Chip8 {
   stack = V.empty,
   stackPointer = 0x0000,
   keyState = V.replicate 16 0x00,
-  drawFlag = False
+  drawFlag = False,
+  randomNumberSeed = mkStdGen 11111
 }

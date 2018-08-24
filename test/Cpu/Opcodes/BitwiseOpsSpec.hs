@@ -51,6 +51,31 @@ spec = do
       let updatedProgramCounter = programCounter resultingState
       updatedProgramCounter `shouldBe` 0x3A2
 
+  describe "randomBitwiseAnd" $ do
+    let originalVRegisters = vRegisters defaultState
+
+    let initialState = defaultState {
+      currentOpcode = 0xC572,
+      vRegisters = V.update originalVRegisters $ V.fromList [(0x5,0xAB)],
+      programCounter = 0x320
+    }
+
+    let resultingState = randomBitwiseAnd initialState
+
+    it "assigns register x to the result of bitwise and on random number and two digit constant" $ do
+      let resultingVRegisters = vRegisters resultingState
+      let register = resultingVRegisters V.! 0x5
+      register `shouldBe` 0x32
+
+    it "generates a new seed" $ do
+      let newSeed = randomNumberSeed resultingState
+      let newSeedString = show newSeed
+      newSeedString `shouldBe` "444635568 40692"
+
+    it "increments the program counter" $ do
+      let updatedProgramCounter = programCounter resultingState
+      updatedProgramCounter `shouldBe` 0x322
+
   describe "bitwiseXor" $ do
     let originalVRegisters = vRegisters defaultState
 

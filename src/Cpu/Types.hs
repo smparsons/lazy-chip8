@@ -18,5 +18,6 @@ data Chip8 = Chip8 {
   stack :: V.Vector Word16,
   stackPointer :: Word16,
   keyState :: V.Vector Word8,
-  drawFlag :: Bool
+  drawFlag :: Bool,
+  randomNumberSeed :: StdGen
 } deriving (Show)

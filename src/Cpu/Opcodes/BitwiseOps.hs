@@ -8,8 +8,8 @@ module Cpu.Opcodes.BitwiseOps
 ) where
 
 import System.Random
-import Data.Bits
 import Data.Word
+import Data.Bits
 import qualified Data.Vector as V
 
 import Cpu.Helpers
@@ -58,19 +58,24 @@ bitwiseAnd chip8State =
   0xCXNN
   Sets VX to the result of a bitwise and operation on a random number (Typically: 0 to 255) and NN.
 -}
-randomBitwiseAnd :: Chip8 -> IO Chip8
-randomBitwiseAnd chip8State = do
-  let originalVRegisters = vRegisters chip8State
-  let originalProgramCounter = programCounter chip8State
-  let opcode = currentOpcode chip8State 
-  let registerX = parseRegisterXNumber opcode 
-  let constant = parseTwoDigitConstant opcode
-  randomValue <- randomRIO (0, 255) :: IO Word8
-  let bitwiseAndResult = constant .&. randomValue
-  return chip8State {
+randomBitwiseAnd :: Chip8 -> Chip8
+randomBitwiseAnd chip8State =
+  chip8State {
     vRegisters = V.update originalVRegisters $ V.fromList [(registerX,bitwiseAndResult)],
+    randomNumberSeed = newSeed,
     programCounter = originalProgramCounter + programCounterIncrement
-  }
+  }  
+  where 
+    originalVRegisters = vRegisters chip8State
+    originalProgramCounter = programCounter chip8State
+    originalSeed = randomNumberSeed chip8State
+    opcode = currentOpcode chip8State 
+    registerX = parseRegisterXNumber opcode 
+    constant = parseTwoDigitConstant opcode
+    randomResultTuple = randomR (0, 255) originalSeed
+    randomValue = fst randomResultTuple :: Word8
+    newSeed = snd randomResultTuple
+    bitwiseAndResult = constant .&. randomValue
 
 {-
   0x8XY3
