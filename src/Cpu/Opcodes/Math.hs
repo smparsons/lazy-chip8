@@ -12,7 +12,7 @@ import Cpu.Constants
 
 {-
   0x8XY4
-	Adds VY to VX. VF is set to 1 when there's a carry, and to 0 when there isn't.
+  Adds VY to VX. VF is set to 1 when there's a carry, and to 0 when there isn't.
 -}
 addTwoRegisters :: Chip8 -> Chip8
 addTwoRegisters chip8State = 
@@ -53,7 +53,7 @@ subtractRegister chip8State =
 
 {-
   0x8XY7
-	Sets VX to VY minus VX. VF is set to 0 when there's a borrow, and 1 when there isn't.
+  Sets VX to VY minus VX. VF is set to 0 when there's a borrow, and 1 when there isn't.
 -}
 subtractTwoRegisters :: Chip8 -> Chip8
 subtractTwoRegisters chip8State =
