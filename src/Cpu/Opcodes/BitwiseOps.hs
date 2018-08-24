@@ -37,7 +37,7 @@ bitwiseOr chip8State =
 
 {-
   0x8XY2
-	Sets VX to VX and VY. (Bitwise AND operation)
+  Sets VX to VX and VY. (Bitwise AND operation)
 -}
 bitwiseAnd :: Chip8 -> Chip8
 bitwiseAnd chip8State =
@@ -74,7 +74,7 @@ randomBitwiseAnd chip8State = do
 
 {-
   0x8XY3
-	Sets VX to VX xor VY.
+  Sets VX to VX xor VY.
 -}
 bitwiseXor :: Chip8 -> Chip8
 bitwiseXor chip8State =
