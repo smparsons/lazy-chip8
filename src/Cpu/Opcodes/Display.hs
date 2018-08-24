@@ -11,7 +11,10 @@ import Cpu.Types
 import Cpu.Constants
 import Cpu.Helpers
 
---0x00E0
+{-
+  0x00E0
+  Clears the screen.
+-}
 clearScreen :: Chip8 -> Chip8 
 clearScreen chip8State = 
   chip8State { 
@@ -22,7 +25,14 @@ clearScreen chip8State =
   where
     originalProgramCounter = programCounter chip8State 
 
---0xDXYN
+{-
+  0xDXYN
+  Draws a sprite at coordinate (VX, VY) that has a width of 8 pixels and a height of N pixels. 
+  Each row of 8 pixels is read as bit-coded starting from memory location I; I value doesn’t 
+  change after the execution of this instruction. As described above, VF is set to 1 if any 
+  screen pixels are flipped from set to unset when the sprite is drawn, and to 0 if that 
+  doesn’t happen
+-}
 drawGraphics :: Chip8 -> Chip8
 drawGraphics chip8State =
   chip8State {

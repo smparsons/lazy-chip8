@@ -16,7 +16,10 @@ import Cpu.Helpers
 import Cpu.Types
 import Cpu.Constants
 
---0x8XY1
+{-
+  0x8XY1
+  Sets VX to VX or VY. (Bitwise OR operation)
+-}
 bitwiseOr :: Chip8 -> Chip8 
 bitwiseOr chip8State =
   chip8State {
@@ -32,7 +35,10 @@ bitwiseOr chip8State =
     registerYValue = getRegisterYValue opcode originalVRegisters 
     bitwiseOrResult = registerXValue .|. registerYValue 
 
---0x8XY2
+{-
+  0x8XY2
+	Sets VX to VX and VY. (Bitwise AND operation)
+-}
 bitwiseAnd :: Chip8 -> Chip8
 bitwiseAnd chip8State =
   chip8State {
@@ -48,7 +54,10 @@ bitwiseAnd chip8State =
     registerYValue = getRegisterYValue opcode originalVRegisters 
     bitwiseAndResult = registerXValue .&. registerYValue 
 
---0xCXNN
+{-
+  0xCXNN
+  Sets VX to the result of a bitwise and operation on a random number (Typically: 0 to 255) and NN.
+-}
 randomBitwiseAnd :: Chip8 -> IO Chip8
 randomBitwiseAnd chip8State = do
   let originalVRegisters = vRegisters chip8State
@@ -63,7 +72,10 @@ randomBitwiseAnd chip8State = do
     programCounter = originalProgramCounter + programCounterIncrement
   }
 
---0x8XY3
+{-
+  0x8XY3
+	Sets VX to VX xor VY.
+-}
 bitwiseXor :: Chip8 -> Chip8
 bitwiseXor chip8State =
   chip8State {
@@ -79,7 +91,10 @@ bitwiseXor chip8State =
     registerYValue = getRegisterYValue opcode originalVRegisters 
     bitwiseXorResult = registerXValue `xor` registerYValue 
 
---0x8XY6
+{-
+  0x8XY6
+  Stores the least significant bit of VX in VF and then shifts VX to the right by 1.
+-}
 shiftRight :: Chip8 -> Chip8 
 shiftRight chip8State =
   chip8State {
@@ -97,7 +112,10 @@ shiftRight chip8State =
     leastSignificantBit = registerYValue .&. 0x1
     bitShiftResult = shiftR registerYValue 1
 
---0x8XYE
+{-
+  0x8XYE
+  Stores the most significant bit of VX in VF and then shifts VX to the left by 1.[3]
+-}
 shiftLeft :: Chip8 -> Chip8 
 shiftLeft chip8State =
   chip8State {

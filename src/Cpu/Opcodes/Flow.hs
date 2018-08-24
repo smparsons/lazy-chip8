@@ -13,7 +13,10 @@ import Cpu.Types
 import Cpu.Constants
 import Cpu.Helpers
 
---0x00EE
+{-
+  0x00EE
+  Returns from a subroutine.
+-}
 returnFromSubroutine :: Chip8 -> Chip8
 returnFromSubroutine chip8State =
   chip8State {
@@ -26,7 +29,10 @@ returnFromSubroutine chip8State =
     originalStackPointer = stackPointer chip8State
     lastAddress = V.last originalStack
 
---0x1NNN
+{-
+  0x1NNN
+  Jumps to address NNN.
+-}
 jumpToAddress :: Chip8 -> Chip8 
 jumpToAddress chip8State = 
   chip8State { 
@@ -36,7 +42,10 @@ jumpToAddress chip8State =
     opcode = currentOpcode chip8State
     newAddress = parseThreeDigitConstant opcode 
 
---0x2NNN
+{-
+  0x2NNN
+  Calls subroutine at NNN.
+-}
 callSubroutine :: Chip8 -> Chip8 
 callSubroutine chip8State = 
   chip8State { 
@@ -50,7 +59,10 @@ callSubroutine chip8State =
     originalStackPointer = stackPointer chip8State 
     originalProgramCounter = programCounter chip8State 
 
---0xBNNN
+{-
+  0xBNNN
+  Jumps to the address NNN plus V0.
+-}
 jumpToAddressPlusRegisterZero :: Chip8 -> Chip8 
 jumpToAddressPlusRegisterZero chip8State =
   chip8State { 

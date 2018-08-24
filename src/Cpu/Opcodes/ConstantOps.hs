@@ -9,7 +9,10 @@ import Cpu.Helpers
 import Cpu.Types
 import Cpu.Constants
 
---0x6XNN
+{-
+  0x6XNN
+  Sets VX to NN.
+-}
 setRegisterToConstant :: Chip8 -> Chip8 
 setRegisterToConstant chip8State =
   chip8State {
@@ -23,7 +26,10 @@ setRegisterToConstant chip8State =
     registerX = parseRegisterXNumber opcode 
     constant = parseTwoDigitConstant opcode
 
---7XNN
+{-
+  7XNN
+  Adds NN to VX. (Carry flag is not changed)
+-}
 addConstantToRegister :: Chip8 -> Chip8
 addConstantToRegister chip8State =
   chip8State {

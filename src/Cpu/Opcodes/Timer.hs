@@ -10,7 +10,10 @@ import Cpu.Helpers
 import Cpu.Types
 import Cpu.Constants
 
---0xFX07
+{-
+  0xFX07
+  Sets VX to the value of the delay timer.
+-}
 setRegisterToDelayTimer :: Chip8 -> Chip8
 setRegisterToDelayTimer chip8State =
   chip8State {
@@ -24,7 +27,10 @@ setRegisterToDelayTimer chip8State =
     registerX = parseRegisterXNumber opcode 
     delayTimerValue = delayTimer chip8State 
 
---0xFX15
+{-
+  0xFX15
+  Sets the delay timer to VX.
+-}
 setDelayTimerToRegister :: Chip8 -> Chip8 
 setDelayTimerToRegister chip8State =
   chip8State {
@@ -37,7 +43,10 @@ setDelayTimerToRegister chip8State =
     opcode = currentOpcode chip8State 
     registerXValue = getRegisterXValue opcode originalVRegisters
 
---0xFX18
+{-
+  0xFX18
+  Sets the sound timer to VX.
+-}
 setSoundTimerToRegister :: Chip8 -> Chip8 
 setSoundTimerToRegister chip8State =
   chip8State {

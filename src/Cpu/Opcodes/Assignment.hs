@@ -8,7 +8,10 @@ import Cpu.Helpers
 import Cpu.Types
 import Cpu.Constants
 
---0x8XY0
+{-
+  0x8XY0
+  Sets VX to the value of VY.
+-}
 assignToRegister :: Chip8 -> Chip8 
 assignToRegister chip8State =
   chip8State {

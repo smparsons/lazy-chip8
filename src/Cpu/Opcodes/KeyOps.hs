@@ -11,7 +11,11 @@ import Cpu.Helpers
 import Cpu.Types
 import Cpu.Constants
 
---0xEX9E
+{-
+  0xEX9E
+  Skips the next instruction if the key stored in VX is pressed. (Usually the next instruction 
+  is a jump to skip a code block)
+-}
 keyIsPressed :: Chip8 -> Chip8 
 keyIsPressed chip8State =
   chip8State {
@@ -28,7 +32,11 @@ keyIsPressed chip8State =
     key = (fromIntegral registerXValue) :: Int
     keyValue = originalKeyState V.! key
 
---0xEXA1
+{-
+  0xEXA1
+  Skips the next instruction if the key stored in VX isn't pressed. (Usually the next instruction 
+  is a jump to skip a code block)
+-}
 keyIsNotPressed :: Chip8 -> Chip8
 keyIsNotPressed chip8State = 
   chip8State {
@@ -45,7 +53,11 @@ keyIsNotPressed chip8State =
     key = (fromIntegral registerXValue) :: Int
     keyValue = originalKeyState V.! key
 
---0xFX0A
+{-
+  0xFX0A
+  A key press is awaited, and then stored in VX. (Blocking Operation. All instruction halted 
+  until next key event)
+-}
 awaitKeyPress :: Chip8 -> Chip8
 awaitKeyPress chip8State =
   case pressedKey of
