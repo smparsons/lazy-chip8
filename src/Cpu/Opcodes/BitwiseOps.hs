@@ -1,12 +1,15 @@
 module Cpu.Opcodes.BitwiseOps
 ( bitwiseOr,
   bitwiseAnd,
+  randomBitwiseAnd,
   bitwiseXor,
   shiftRight,
   shiftLeft
 ) where
 
+import System.Random
 import Data.Bits
+import Data.Word
 import qualified Data.Vector as V
 
 import Cpu.Helpers
@@ -44,6 +47,21 @@ bitwiseAnd chip8State =
     registerXValue = getRegisterXValue opcode originalVRegisters
     registerYValue = getRegisterYValue opcode originalVRegisters 
     bitwiseAndResult = registerXValue .&. registerYValue 
+
+--0xCXNN
+randomBitwiseAnd :: Chip8 -> IO Chip8
+randomBitwiseAnd chip8State = do
+  let originalVRegisters = vRegisters chip8State
+  let originalProgramCounter = programCounter chip8State
+  let opcode = currentOpcode chip8State 
+  let registerX = parseRegisterXNumber opcode 
+  let constant = parseTwoDigitConstant opcode
+  randomValue <- randomRIO (0, 255) :: IO Word8
+  let bitwiseAndResult = constant .&. randomValue
+  return chip8State {
+    vRegisters = V.update originalVRegisters $ V.fromList [(registerX,bitwiseAndResult)],
+    programCounter = originalProgramCounter + programCounterIncrement
+  }
 
 --0x8XY3
 bitwiseXor :: Chip8 -> Chip8

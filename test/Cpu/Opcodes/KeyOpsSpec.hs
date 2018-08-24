@@ -74,3 +74,44 @@ spec = do
       it "continues to the next instruction" $ do
         let updatedProgramCounter = programCounter resultingState
         updatedProgramCounter `shouldBe` 0x27C
+
+  describe "awaitKeyPress" $ do
+    let originalVRegisters = vRegisters defaultState
+    let originalKeyState = keyState defaultState 
+
+    context "when no keys are pressed" $ do
+      let initialState = defaultState {
+        currentOpcode = 0xF60A,
+        vRegisters = V.update originalVRegisters $ V.fromList [(0x6, 0x3B)],
+        programCounter = 0x280
+      }
+  
+      let resultingState = awaitKeyPress initialState
+      
+      it "leaves register untouched" $ do
+        let resultingVRegisters = vRegisters resultingState
+        let register = resultingVRegisters V.! 0x6
+        register `shouldBe` 0x3B
+
+      it "does not move to the next instruction" $ do
+        let updatedProgramCounter = programCounter resultingState
+        updatedProgramCounter `shouldBe` 0x280
+
+    context "when key is pressed" $ do
+      let initialState = defaultState {
+        currentOpcode = 0xF90A,
+        vRegisters = V.update originalVRegisters $ V.fromList [(0x9, 0x7C)],
+        keyState = V.update originalKeyState $ V.fromList [(0x3, 0x1)],
+        programCounter = 0x312
+      }
+
+      let resultingState = awaitKeyPress initialState
+
+      it "stores key pressed in register" $ do
+        let resultingVRegisters = vRegisters resultingState
+        let register = resultingVRegisters V.! 0x9
+        register `shouldBe` 0x3
+
+      it "continues to the next instruction" $ do
+        let updatedProgramCounter = programCounter resultingState
+        updatedProgramCounter `shouldBe` 0x314

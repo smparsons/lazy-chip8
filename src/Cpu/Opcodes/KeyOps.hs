@@ -1,8 +1,10 @@
 module Cpu.Opcodes.KeyOps
 ( keyIsPressed,
-  keyIsNotPressed
+  keyIsNotPressed,
+  awaitKeyPress
 ) where
 
+import Data.Word
 import qualified Data.Vector as V
 
 import Cpu.Helpers
@@ -42,3 +44,22 @@ keyIsNotPressed chip8State =
     registerXValue = getRegisterXValue opcode originalVRegisters
     key = (fromIntegral registerXValue) :: Int
     keyValue = originalKeyState V.! key
+
+--0xFX0A
+awaitKeyPress :: Chip8 -> Chip8
+awaitKeyPress chip8State =
+  case pressedKey of
+    Nothing -> chip8State
+    Just key -> 
+      let convertedKey = fromIntegral key :: Word8 
+      in chip8State { 
+        vRegisters = V.update originalVRegisters $ V.fromList [(registerX,convertedKey)],
+        programCounter = originalProgramCounter + programCounterIncrement
+      }
+  where
+    originalProgramCounter = programCounter chip8State
+    originalVRegisters = vRegisters chip8State
+    originalKeyState = keyState chip8State 
+    opcode = currentOpcode chip8State
+    registerX = parseRegisterXNumber opcode
+    pressedKey = V.findIndex (\key -> key == 0x1) originalKeyState

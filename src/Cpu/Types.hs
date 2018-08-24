@@ -2,6 +2,7 @@ module Cpu.Types
 ( Chip8(..)
 ) where
 
+import System.Random
 import Data.Word
 import qualified Data.Vector as V
 
@@ -18,4 +19,4 @@ data Chip8 = Chip8 {
   stackPointer :: Word16,
   keyState :: V.Vector Word8,
   drawFlag :: Bool
-} deriving (Show, Eq)
+} deriving (Show)
