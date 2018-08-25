@@ -1,6 +1,6 @@
 module Chip8 
 ( emulateCpuCycle,
-  initialize,
+  initializeChip8,
   loadFontset,
   loadGameByFilePath,
   loadGameIntoMemory
@@ -18,8 +18,8 @@ import Types
 emulateCpuCycle :: Chip8 -> Chip8
 emulateCpuCycle = decrementSoundTimer . decrementDelayTimer . executeOpcode
 
-initialize :: IO Chip8
-initialize = do 
+initializeChip8 :: IO Chip8
+initializeChip8 = do 
   newSeed <- newStdGen  
   let emptyMemory = memory chip8InitialState
   let updatedMemory = loadFontset emptyMemory
