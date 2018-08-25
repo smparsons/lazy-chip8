@@ -23,6 +23,7 @@ library
     Cpu.Opcodes.Math,
     Cpu.Opcodes.Memory,
     Cpu.Opcodes.Timer,
+    Cpu.Cycle,
     Cpu.Constants,
     Cpu.Helpers,
     Cpu.Types
@@ -59,6 +60,7 @@ test-suite hspec
       Cpu.Opcodes.MathSpec,
       Cpu.Opcodes.MemorySpec,
       Cpu.Opcodes.TimerSpec,
+      Cpu.CycleSpec,
       Cpu.HelpersSpec,
       Cpu.TestHelpers
     type: exitcode-stdio-1.0
