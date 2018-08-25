@@ -61,6 +61,7 @@ test-suite hspec
       Opcodes.MathSpec,
       Opcodes.MemorySpec,
       Opcodes.TimerSpec,
+      Chip8Spec,
       CpuSpec,
       HelpersSpec
     type: exitcode-stdio-1.0

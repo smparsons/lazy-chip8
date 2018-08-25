@@ -1,6 +1,7 @@
 module Chip8 
 ( emulateCpuCycle,
-  initialize
+  initialize,
+  loadFontset
 ) where
 
 import System.Random
@@ -22,4 +23,7 @@ initialize = do
   return chip8InitialState { memory = updatedMemory, randomNumberSeed = newSeed }
 
 loadFontset :: V.Vector Word8 -> V.Vector Word8
-loadFontset = undefined
+loadFontset givenMemory = V.update givenMemory fontsetAddresses
+  where
+    fontsetVector = V.fromList chip8Fontset
+    fontsetAddresses = V.imap (\index fontsetByte -> (index, fontsetByte)) fontsetVector
