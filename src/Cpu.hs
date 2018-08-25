@@ -1,5 +1,5 @@
 module Cpu
-( emulateCpuCycle,
+( executeOpcode,
   extractOpcodeFromMemory,
   decodeOpcode,
   parseDigitsFromOpcode,
@@ -22,9 +22,6 @@ import Opcodes.KeyOps
 import Opcodes.Math
 import Opcodes.Memory
 import Opcodes.Timer
-
-emulateCpuCycle :: Chip8 -> Chip8
-emulateCpuCycle = decrementSoundTimer . decrementDelayTimer . executeOpcode
 
 executeOpcode :: Chip8 -> Chip8
 executeOpcode chip8State = operation chip8State 

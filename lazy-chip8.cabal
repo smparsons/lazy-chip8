@@ -23,6 +23,7 @@ library
     Opcodes.Math,
     Opcodes.Memory,
     Opcodes.Timer,
+    Chip8
     Cpu,
     Constants,
     Helpers,
