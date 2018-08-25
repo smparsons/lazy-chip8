@@ -1,11 +1,14 @@
 module Chip8 
 ( emulateCpuCycle,
   initialize,
-  loadFontset
+  loadFontset,
+  loadGameByFilePath,
+  loadGameIntoMemory
 ) where
 
 import System.Random
 import Data.Word
+import Data.ByteString as BS
 import qualified Data.Vector as V
 
 import Constants
@@ -26,4 +29,20 @@ loadFontset :: V.Vector Word8 -> V.Vector Word8
 loadFontset givenMemory = V.update givenMemory fontsetAddresses
   where
     fontsetVector = V.fromList chip8Fontset
-    fontsetAddresses = V.imap (\index fontsetByte -> (index, fontsetByte)) fontsetVector
+    fontsetAddresses = V.imap (\currentIndex fontsetByte -> (currentIndex, fontsetByte)) fontsetVector
+
+loadGameByFilePath :: String -> Chip8 -> IO Chip8
+loadGameByFilePath filePath chip8State = do
+  contents <- BS.readFile filePath
+  let game = unpack contents
+  let initialMemory = memory chip8State
+  let updatedMemory = loadGameIntoMemory initialMemory game
+  return chip8State { memory = updatedMemory }
+
+loadGameIntoMemory :: V.Vector Word8 -> [Word8] -> V.Vector Word8
+loadGameIntoMemory givenMemory game = V.update givenMemory gameAddresses
+  where 
+    gameVector = V.fromList game
+    gameAddresses = V.imap (\currentIndex gameByte -> (currentIndex + 0x200, gameByte)) gameVector
+
+
