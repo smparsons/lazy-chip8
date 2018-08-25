@@ -3,6 +3,7 @@ module Chip8
   initialize
 ) where
 
+import System.Random
 import Data.Word
 import qualified Data.Vector as V
 
@@ -13,10 +14,12 @@ import Types
 emulateCpuCycle :: Chip8 -> Chip8
 emulateCpuCycle = decrementSoundTimer . decrementDelayTimer . executeOpcode
 
-initialize :: Chip8
-initialize = chip8InitialState { memory = loadFontset originalMemory }
-  where 
-    originalMemory = memory chip8InitialState
+initialize :: IO Chip8
+initialize = do 
+  newSeed <- newStdGen  
+  let emptyMemory = memory chip8InitialState
+  let updatedMemory = loadFontset emptyMemory
+  return chip8InitialState { memory = updatedMemory, randomNumberSeed = newSeed }
 
 loadFontset :: V.Vector Word8 -> V.Vector Word8
 loadFontset = undefined
