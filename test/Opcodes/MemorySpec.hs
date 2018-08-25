@@ -1,12 +1,12 @@
-module Cpu.Opcodes.MemorySpec 
+module Opcodes.MemorySpec 
 ( spec
 ) where
 
 import Test.Hspec
 
-import Cpu.Opcodes.Memory
-import Cpu.Types
-import Cpu.TestHelpers
+import Opcodes.Memory
+import Types
+import TestHelpers
 import qualified Data.Vector as V
 
 spec :: Spec

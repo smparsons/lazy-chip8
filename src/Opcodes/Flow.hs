@@ -1,4 +1,4 @@
-module Cpu.Opcodes.Flow
+module Opcodes.Flow
 ( returnFromSubroutine,
   jumpToAddress,
   callSubroutine,
@@ -9,9 +9,9 @@ import Data.Bits
 import Data.Word
 import qualified Data.Vector as V
 
-import Cpu.Types
-import Cpu.Constants
-import Cpu.Helpers
+import Types
+import Constants
+import Helpers
 
 {-
   0x00EE

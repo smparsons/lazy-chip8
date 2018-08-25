@@ -1,4 +1,4 @@
-module Cpu.Cycle
+module Cpu
 ( emulateCpuCycle,
   extractOpcodeFromMemory,
   decodeOpcode,
@@ -11,17 +11,17 @@ import Data.Word
 import Data.Bits
 import qualified Data.Vector as V
 
-import Cpu.Types
-import Cpu.Opcodes.Assignment
-import Cpu.Opcodes.BitwiseOps
-import Cpu.Opcodes.Conditionals
-import Cpu.Opcodes.ConstantOps
-import Cpu.Opcodes.Display
-import Cpu.Opcodes.Flow
-import Cpu.Opcodes.KeyOps
-import Cpu.Opcodes.Math
-import Cpu.Opcodes.Memory
-import Cpu.Opcodes.Timer
+import Types
+import Opcodes.Assignment
+import Opcodes.BitwiseOps
+import Opcodes.Conditionals
+import Opcodes.ConstantOps
+import Opcodes.Display
+import Opcodes.Flow
+import Opcodes.KeyOps
+import Opcodes.Math
+import Opcodes.Memory
+import Opcodes.Timer
 
 emulateCpuCycle :: Chip8 -> Chip8
 emulateCpuCycle = decrementSoundTimer . decrementDelayTimer . executeOpcode

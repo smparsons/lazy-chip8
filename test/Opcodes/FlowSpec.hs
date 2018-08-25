@@ -1,12 +1,12 @@
-module Cpu.Opcodes.FlowSpec 
+module Opcodes.FlowSpec 
 ( spec
 ) where
 
 import Test.Hspec
 
-import Cpu.Opcodes.Flow
-import Cpu.Types
-import Cpu.TestHelpers
+import Opcodes.Flow
+import Types
+import TestHelpers
 import qualified Data.Vector as V
 
 spec :: Spec

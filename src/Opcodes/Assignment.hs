@@ -1,12 +1,12 @@
-module Cpu.Opcodes.Assignment
+module Opcodes.Assignment
 ( assignToRegister
 ) where
 
 import qualified Data.Vector as V
 
-import Cpu.Helpers
-import Cpu.Types
-import Cpu.Constants
+import Helpers
+import Types
+import Constants
 
 {-
   0x8XY0

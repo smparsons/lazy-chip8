@@ -1,12 +1,12 @@
-module Cpu.Opcodes.TimerSpec 
+module Opcodes.TimerSpec 
 ( spec
 ) where
 
 import Test.Hspec
 
-import Cpu.Opcodes.Timer
-import Cpu.Types
-import Cpu.TestHelpers
+import Opcodes.Timer
+import Types
+import TestHelpers
 import qualified Data.Vector as V
 
 spec :: Spec

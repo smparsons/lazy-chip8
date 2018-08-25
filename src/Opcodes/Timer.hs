@@ -1,4 +1,4 @@
-module Cpu.Opcodes.Timer
+module Opcodes.Timer
 ( setRegisterToDelayTimer,
   setDelayTimerToRegister,
   setSoundTimerToRegister 
@@ -6,9 +6,9 @@ module Cpu.Opcodes.Timer
 
 import qualified Data.Vector as V
 
-import Cpu.Helpers
-import Cpu.Types
-import Cpu.Constants
+import Helpers
+import Types
+import Constants
 
 {-
   0xFX07

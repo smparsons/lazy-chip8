@@ -1,4 +1,4 @@
-module Cpu.Constants
+module Constants
 ( programCounterIncrement,
   chip8NumberOfColumns
 ) where

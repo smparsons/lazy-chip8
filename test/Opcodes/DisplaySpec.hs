@@ -1,12 +1,12 @@
-module Cpu.Opcodes.DisplaySpec 
+module Opcodes.DisplaySpec 
 ( spec
 ) where
 
 import Test.Hspec
 
-import Cpu.Opcodes.Display
-import Cpu.Types
-import Cpu.TestHelpers
+import Opcodes.Display
+import Types
+import TestHelpers
 import qualified Data.Vector as V
 
 spec :: Spec

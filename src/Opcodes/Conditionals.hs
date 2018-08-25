@@ -1,13 +1,13 @@
-module Cpu.Opcodes.Conditionals
+module Opcodes.Conditionals
 ( registerEqualsConstant,
   registerDoesNotEqualConstant,
   registersAreEqual,
   registersAreNotEqual
 ) where
 
-import Cpu.Helpers
-import Cpu.Types
-import Cpu.Constants
+import Helpers
+import Types
+import Constants
 
 {-
   0x3XNN

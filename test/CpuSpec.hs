@@ -1,11 +1,11 @@
-module Cpu.CycleSpec 
+module CpuSpec 
 ( spec
 ) where
 
 import Test.Hspec
-import Cpu.Cycle
-import Cpu.Types
-import Cpu.TestHelpers
+import Cpu
+import Types
+import TestHelpers
 import Data.Word
 import qualified Data.Vector as V
 

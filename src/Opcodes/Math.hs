@@ -1,4 +1,4 @@
-module Cpu.Opcodes.Math
+module Opcodes.Math
 ( addTwoRegisters,
   subtractRegister,
   subtractTwoRegisters
@@ -6,9 +6,9 @@ module Cpu.Opcodes.Math
 
 import qualified Data.Vector as V
 
-import Cpu.Helpers
-import Cpu.Types
-import Cpu.Constants
+import Helpers
+import Types
+import Constants
 
 {-
   0x8XY4

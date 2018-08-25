@@ -1,12 +1,12 @@
-module Cpu.Opcodes.ConstantOpsSpec 
+module Opcodes.ConstantOpsSpec 
 ( spec
 ) where
 
 import Test.Hspec
 
-import Cpu.Opcodes.ConstantOps
-import Cpu.Types
-import Cpu.TestHelpers
+import Opcodes.ConstantOps
+import Types
+import TestHelpers
 import qualified Data.Vector as V
 
 spec :: Spec

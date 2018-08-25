@@ -1,4 +1,4 @@
-module Cpu.Opcodes.Display
+module Opcodes.Display
 ( clearScreen,
   drawGraphics
 ) where
@@ -7,9 +7,9 @@ import qualified Data.Vector as V
 
 import Data.Bits
 
-import Cpu.Types
-import Cpu.Constants
-import Cpu.Helpers
+import Types
+import Constants
+import Helpers
 
 {-
   0x00E0

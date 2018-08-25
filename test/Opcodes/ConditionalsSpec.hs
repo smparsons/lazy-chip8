@@ -1,12 +1,12 @@
-module Cpu.Opcodes.ConditionalsSpec 
+module Opcodes.ConditionalsSpec 
 ( spec
 ) where
 
 import Test.Hspec
 
-import Cpu.Opcodes.Conditionals
-import Cpu.Types
-import Cpu.TestHelpers
+import Opcodes.Conditionals
+import Types
+import TestHelpers
 import qualified Data.Vector as V
 
 spec :: Spec

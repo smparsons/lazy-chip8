@@ -1,12 +1,12 @@
-module Cpu.Opcodes.KeyOpsSpec 
+module Opcodes.KeyOpsSpec 
 ( spec
 ) where
 
 import Test.Hspec
 
-import Cpu.Opcodes.KeyOps
-import Cpu.Types
-import Cpu.TestHelpers
+import Opcodes.KeyOps
+import Types
+import TestHelpers
 import qualified Data.Vector as V
 
 spec :: Spec

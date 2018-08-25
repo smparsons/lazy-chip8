@@ -1,12 +1,12 @@
-module Cpu.Opcodes.BitwiseOpsSpec 
+module Opcodes.BitwiseOpsSpec 
 ( spec
 ) where
 
 import Test.Hspec
 
-import Cpu.Opcodes.BitwiseOps
-import Cpu.Types
-import Cpu.TestHelpers
+import Opcodes.BitwiseOps
+import Types
+import TestHelpers
 import qualified Data.Vector as V
 
 spec :: Spec

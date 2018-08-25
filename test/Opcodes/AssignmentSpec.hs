@@ -1,12 +1,12 @@
-module Cpu.Opcodes.AssignmentSpec 
+module Opcodes.AssignmentSpec 
 ( spec
 ) where
 
 import Test.Hspec
 
-import Cpu.Opcodes.Assignment
-import Cpu.Types
-import Cpu.TestHelpers
+import Opcodes.Assignment
+import Types
+import TestHelpers
 import qualified Data.Vector as V
 
 spec :: Spec

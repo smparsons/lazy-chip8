@@ -1,4 +1,4 @@
-module Cpu.Helpers
+module Helpers
 ( parseRegisterXNumber,
   getRegisterXValue,
   parseRegisterYNumber,

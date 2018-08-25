@@ -1,4 +1,4 @@
-module Cpu.Opcodes.KeyOps
+module Opcodes.KeyOps
 ( keyIsPressed,
   keyIsNotPressed,
   awaitKeyPress
@@ -7,9 +7,9 @@ module Cpu.Opcodes.KeyOps
 import Data.Word
 import qualified Data.Vector as V
 
-import Cpu.Helpers
-import Cpu.Types
-import Cpu.Constants
+import Helpers
+import Types
+import Constants
 
 {-
   0xEX9E

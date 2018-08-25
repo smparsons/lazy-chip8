@@ -1,4 +1,4 @@
-module Cpu.Types
+module Types
 ( Chip8(..)
 ) where
 

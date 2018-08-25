@@ -1,12 +1,12 @@
-module Cpu.Opcodes.MathSpec 
+module Opcodes.MathSpec 
 ( spec
 ) where
 
 import Test.Hspec
 
-import Cpu.Opcodes.Math
-import Cpu.Types
-import Cpu.TestHelpers
+import Opcodes.Math
+import Types
+import TestHelpers
 import qualified Data.Vector as V
 
 spec :: Spec

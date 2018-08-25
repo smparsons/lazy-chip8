@@ -13,20 +13,20 @@ extra-source-files:  README.md
 
 library
   hs-source-dirs: src
-  exposed-modules: Cpu.Opcodes.Assignment, 
-    Cpu.Opcodes.BitwiseOps,
-    Cpu.Opcodes.Conditionals,
-    Cpu.Opcodes.ConstantOps,
-    Cpu.Opcodes.Display,
-    Cpu.Opcodes.Flow,
-    Cpu.Opcodes.KeyOps,
-    Cpu.Opcodes.Math,
-    Cpu.Opcodes.Memory,
-    Cpu.Opcodes.Timer,
-    Cpu.Cycle,
-    Cpu.Constants,
-    Cpu.Helpers,
-    Cpu.Types
+  exposed-modules: Opcodes.Assignment, 
+    Opcodes.BitwiseOps,
+    Opcodes.Conditionals,
+    Opcodes.ConstantOps,
+    Opcodes.Display,
+    Opcodes.Flow,
+    Opcodes.KeyOps,
+    Opcodes.Math,
+    Opcodes.Memory,
+    Opcodes.Timer,
+    Cpu,
+    Constants,
+    Helpers,
+    Types
   default-extensions: Strict
   ghc-options: -Wall
   build-depends: base >= 4.7 && < 5,
@@ -50,17 +50,17 @@ test-suite hspec
     default-language: Haskell2010
     hs-source-dirs: test
     main-is: Spec.hs
-    other-modules: Cpu.Opcodes.AssignmentSpec, 
-      Cpu.Opcodes.BitwiseOpsSpec,
-      Cpu.Opcodes.ConditionalsSpec,
-      Cpu.Opcodes.ConstantOpsSpec,
-      Cpu.Opcodes.DisplaySpec,
-      Cpu.Opcodes.FlowSpec,
-      Cpu.Opcodes.KeyOpsSpec,
-      Cpu.Opcodes.MathSpec,
-      Cpu.Opcodes.MemorySpec,
-      Cpu.Opcodes.TimerSpec,
-      Cpu.CycleSpec,
-      Cpu.HelpersSpec,
-      Cpu.TestHelpers
+    other-modules: Opcodes.AssignmentSpec, 
+      Opcodes.BitwiseOpsSpec,
+      Opcodes.ConditionalsSpec,
+      Opcodes.ConstantOpsSpec,
+      Opcodes.DisplaySpec,
+      Opcodes.FlowSpec,
+      Opcodes.KeyOpsSpec,
+      Opcodes.MathSpec,
+      Opcodes.MemorySpec,
+      Opcodes.TimerSpec,
+      CpuSpec,
+      HelpersSpec,
+      TestHelpers
     type: exitcode-stdio-1.0

@@ -1,11 +1,11 @@
-module Cpu.TestHelpers 
+module TestHelpers 
 ( defaultState
 ) where
 
 import System.Random 
 import qualified Data.Vector as V
 
-import Cpu.Types
+import Types
 
 defaultState :: Chip8
 defaultState = Chip8 {

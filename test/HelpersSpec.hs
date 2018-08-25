@@ -1,9 +1,9 @@
-module Cpu.HelpersSpec 
+module HelpersSpec 
 ( spec
 ) where
 
 import Test.Hspec
-import Cpu.Helpers
+import Helpers
 import Data.Word
 import qualified Data.Vector as V
 
