@@ -6,15 +6,15 @@ import Test.Hspec
 
 import Opcodes.ConstantOps
 import Types
-import TestHelpers
+import Constants
 import qualified Data.Vector as V
 
 spec :: Spec
 spec = do
   describe "setRegisterToConstant" $ do
-    let originalVRegisters = vRegisters defaultState
+    let originalVRegisters = vRegisters chip8InitialState
 
-    let initialState = defaultState {
+    let initialState = chip8InitialState {
       currentOpcode = 0x6C23,
       vRegisters = V.update originalVRegisters $ V.fromList [(0xC, 0x5A)],
       programCounter = 0x180
@@ -32,9 +32,9 @@ spec = do
       updatedProgramCounter `shouldBe` 0x182
 
   describe "addConstantToRegister" $ do
-    let originalVRegisters = vRegisters defaultState
+    let originalVRegisters = vRegisters chip8InitialState
 
-    let initialState = defaultState {
+    let initialState = chip8InitialState {
       currentOpcode = 0x7EA2,
       vRegisters = V.update originalVRegisters $ V.fromList [(0xE, 0x15)],
       programCounter = 0x210

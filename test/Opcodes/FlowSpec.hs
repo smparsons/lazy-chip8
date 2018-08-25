@@ -6,13 +6,13 @@ import Test.Hspec
 
 import Opcodes.Flow
 import Types
-import TestHelpers
+import Constants
 import qualified Data.Vector as V
 
 spec :: Spec
 spec = do
   describe "returnFromSubroutine" $ do
-    let initialState = defaultState {
+    let initialState = chip8InitialState {
       stackPointer = 2,
       stack = V.fromList [0x150, 0x2F2],
       programCounter = 0x316
@@ -32,7 +32,7 @@ spec = do
       resultingProgramCounter `shouldBe` 0x2F4
 
   describe "jumpToAddress" $ do
-    let initialState = defaultState {
+    let initialState = chip8InitialState {
       currentOpcode = 0x11EF,
       programCounter = 0x3FF
     }
@@ -43,7 +43,7 @@ spec = do
       currentProgramCounter `shouldBe` 0x1EF
 
   describe "callSubroutine" $ do
-    let initialState = defaultState { 
+    let initialState = chip8InitialState { 
       currentOpcode = 0x225F,
       stackPointer = 1,
       stack = V.fromList [0x210],
@@ -68,9 +68,9 @@ spec = do
       resultingProgramCounter `shouldBe` 0x25F 
 
   describe "jumpToAddressPlusRegisterZero" $ do 
-    let originalVRegisters = vRegisters defaultState
+    let originalVRegisters = vRegisters chip8InitialState
 
-    let initialState = defaultState {
+    let initialState = chip8InitialState {
       currentOpcode = 0xB1FA,
       vRegisters = V.update originalVRegisters $ V.fromList [(0x0,0x51)],
       programCounter = 0x12A

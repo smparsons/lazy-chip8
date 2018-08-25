@@ -6,15 +6,15 @@ import Test.Hspec
 
 import Opcodes.Timer
 import Types
-import TestHelpers
+import Constants
 import qualified Data.Vector as V
 
 spec :: Spec
 spec = do
   describe "setRegisterToDelayTimer" $ do
-    let originalVRegisters = vRegisters defaultState
+    let originalVRegisters = vRegisters chip8InitialState
 
-    let initialState = defaultState {
+    let initialState = chip8InitialState {
       currentOpcode = 0xFD07,
       vRegisters = V.update originalVRegisters $ V.fromList [(0xD,0x15)],
       delayTimer = 0x2A,
@@ -33,9 +33,9 @@ spec = do
       updatedProgramCounter `shouldBe` 0x15D
 
   describe "setDelayTimerToRegister" $ do
-    let originalVRegisters = vRegisters defaultState
+    let originalVRegisters = vRegisters chip8InitialState
 
-    let initialState = defaultState {
+    let initialState = chip8InitialState {
       currentOpcode = 0xF815,
       vRegisters = V.update originalVRegisters $ V.fromList [(0x8,0x10)],
       delayTimer = 0x31,
@@ -53,9 +53,9 @@ spec = do
       updatedProgramCounter `shouldBe` 0x18C 
 
   describe "setSoundTimerToRegister" $ do
-    let originalVRegisters = vRegisters defaultState
+    let originalVRegisters = vRegisters chip8InitialState
 
-    let initialState = defaultState {
+    let initialState = chip8InitialState {
       currentOpcode = 0xF218,
       vRegisters = V.update originalVRegisters $ V.fromList [(0x2,0x2C)],
       soundTimer = 0x33,

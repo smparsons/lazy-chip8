@@ -5,7 +5,7 @@ module CpuSpec
 import Test.Hspec
 import Cpu
 import Types
-import TestHelpers
+import Constants
 import Data.Word
 import qualified Data.Vector as V
 
@@ -43,26 +43,26 @@ spec = do
 
   describe "decrementSoundTimer" $ do
     it "decrements sound timer" $ do
-      let initialState = defaultState { soundTimer = 0x21 }
+      let initialState = chip8InitialState { soundTimer = 0x21 }
       let resultingState = decrementSoundTimer initialState
       let resultingSoundTimer = soundTimer resultingState
       resultingSoundTimer `shouldBe` 0x20
 
     it "does not decrement sound timer when it is already at zero" $ do
-      let initialState = defaultState { soundTimer = 0x0 }
+      let initialState = chip8InitialState { soundTimer = 0x0 }
       let resultingState = decrementSoundTimer initialState
       let resultingSoundTimer = soundTimer resultingState
       resultingSoundTimer `shouldBe` 0x0
 
   describe "decrementDelayTimer" $ do
     it "decrements delay timer" $ do
-      let initialState = defaultState { delayTimer = 0x1A }
+      let initialState = chip8InitialState { delayTimer = 0x1A }
       let resultingState = decrementDelayTimer initialState
       let resultingDelayTimer = delayTimer resultingState
       resultingDelayTimer `shouldBe` 0x19
 
     it "does not decrement delay timer when it is already at zero" $ do
-      let initialState = defaultState { delayTimer = 0x0 }
+      let initialState = chip8InitialState { delayTimer = 0x0 }
       let resultingState = decrementDelayTimer initialState
       let resultingDelayTimer = delayTimer resultingState
       resultingDelayTimer `shouldBe` 0x0

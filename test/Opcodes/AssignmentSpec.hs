@@ -6,15 +6,15 @@ import Test.Hspec
 
 import Opcodes.Assignment
 import Types
-import TestHelpers
+import Constants
 import qualified Data.Vector as V
 
 spec :: Spec
 spec = do
   describe "assignToRegister" $ do
-    let originalVRegisters = vRegisters defaultState
+    let originalVRegisters = vRegisters chip8InitialState
 
-    let initialState = defaultState {
+    let initialState = chip8InitialState {
       currentOpcode = 0x8C50,
       vRegisters = V.update originalVRegisters $ V.fromList [(0xC,0x25),(0x5,0xA1)],
       programCounter = 0x27A

@@ -3,18 +3,19 @@ module Opcodes.BitwiseOpsSpec
 ) where
 
 import Test.Hspec
+import System.Random
 
 import Opcodes.BitwiseOps
 import Types
-import TestHelpers
+import Constants
 import qualified Data.Vector as V
 
 spec :: Spec
 spec = do
   describe "bitwiseOr" $ do
-    let originalVRegisters = vRegisters defaultState
+    let originalVRegisters = vRegisters chip8InitialState
 
-    let initialState = defaultState {
+    let initialState = chip8InitialState {
       currentOpcode = 0x8AB1,
       vRegisters = V.update originalVRegisters $ V.fromList [(0xA,0x7A),(0xB,0x05)],
       programCounter = 0x1FE
@@ -32,9 +33,9 @@ spec = do
       updatedProgramCounter `shouldBe` 0x200
 
   describe "bitwiseAnd" $ do
-    let originalVRegisters = vRegisters defaultState
+    let originalVRegisters = vRegisters chip8InitialState
 
-    let initialState = defaultState {
+    let initialState = chip8InitialState {
       currentOpcode = 0x8372,
       vRegisters = V.update originalVRegisters $ V.fromList [(0x3,0x70),(0x7,0x10)],
       programCounter = 0x3A0
@@ -52,12 +53,13 @@ spec = do
       updatedProgramCounter `shouldBe` 0x3A2
 
   describe "randomBitwiseAnd" $ do
-    let originalVRegisters = vRegisters defaultState
+    let originalVRegisters = vRegisters chip8InitialState
 
-    let initialState = defaultState {
+    let initialState = chip8InitialState {
       currentOpcode = 0xC572,
       vRegisters = V.update originalVRegisters $ V.fromList [(0x5,0xAB)],
-      programCounter = 0x320
+      programCounter = 0x320,
+      randomNumberSeed = mkStdGen 11111
     }
 
     let resultingState = randomBitwiseAnd initialState
@@ -77,9 +79,9 @@ spec = do
       updatedProgramCounter `shouldBe` 0x322
 
   describe "bitwiseXor" $ do
-    let originalVRegisters = vRegisters defaultState
+    let originalVRegisters = vRegisters chip8InitialState
 
-    let initialState = defaultState {
+    let initialState = chip8InitialState {
       currentOpcode = 0x89D3,
       vRegisters = V.update originalVRegisters $ V.fromList [(0x9,0x1A),(0xD,0x1F)],
       programCounter = 0x27C
@@ -97,9 +99,9 @@ spec = do
       updatedProgramCounter `shouldBe` 0x27E
 
   describe "shiftRight" $ do
-    let originalVRegisters = vRegisters defaultState
+    let originalVRegisters = vRegisters chip8InitialState
 
-    let initialState = defaultState {
+    let initialState = chip8InitialState {
       currentOpcode = 0x8746,
       vRegisters = V.update originalVRegisters $ V.fromList [(0x7,0x3F),(0x4,0x1C),(0xF,0x1)],
       programCounter = 0x223
@@ -121,9 +123,9 @@ spec = do
       updatedProgramCounter `shouldBe` 0x225
 
   describe "shiftLeft" $ do
-    let originalVRegisters = vRegisters defaultState
+    let originalVRegisters = vRegisters chip8InitialState
 
-    let initialState = defaultState {
+    let initialState = chip8InitialState {
       currentOpcode = 0x8C1E,
       vRegisters = V.update originalVRegisters $ V.fromList [(0xC,0x2F),(0x1,0xEA),(0xF,0x0)],
       programCounter = 0x11A

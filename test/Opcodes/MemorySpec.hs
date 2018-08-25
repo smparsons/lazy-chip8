@@ -6,15 +6,15 @@ import Test.Hspec
 
 import Opcodes.Memory
 import Types
-import TestHelpers
+import Constants
 import qualified Data.Vector as V
 
 spec :: Spec
 spec = do
   describe "setIndexRegisterToAddress" $ do
-    let originalVRegisters = vRegisters defaultState
+    let originalVRegisters = vRegisters chip8InitialState
 
-    let initialState = defaultState {
+    let initialState = chip8InitialState {
       currentOpcode = 0xA2F0,
       programCounter = 0x2AC
     }
@@ -30,9 +30,9 @@ spec = do
       updatedProgramCounter `shouldBe` 0x2AE
 
   describe "addRegisterToIndexRegister" $ do
-    let originalVRegisters = vRegisters defaultState
+    let originalVRegisters = vRegisters chip8InitialState
 
-    let initialState = defaultState {
+    let initialState = chip8InitialState {
       currentOpcode = 0xFC1E,
       indexRegister = 0x2BF,
       vRegisters = V.update originalVRegisters $ V.fromList [(0xC,0x5C)],
@@ -50,9 +50,9 @@ spec = do
       updatedProgramCounter `shouldBe` 0x2FF
 
   describe "registerDump" $ do
-    let originalVRegisters = vRegisters defaultState
+    let originalVRegisters = vRegisters chip8InitialState
 
-    let initialState = defaultState {
+    let initialState = chip8InitialState {
       currentOpcode = 0xF755,
       indexRegister = 0x1AC,
       vRegisters = V.update originalVRegisters $ V.fromList 
@@ -80,9 +80,9 @@ spec = do
       updatedProgramCounter `shouldBe` 0x3CE
 
   describe "registerLoad" $ do
-    let originalMemory = memory defaultState
+    let originalMemory = memory chip8InitialState
 
-    let initialState = defaultState {
+    let initialState = chip8InitialState {
       currentOpcode = 0xF565,
       indexRegister = 0x20C,
       memory = V.update originalMemory $ V.fromList
@@ -108,9 +108,9 @@ spec = do
       updatedProgramCounter `shouldBe` 0x141
 
   describe "storeBCD" $ do
-    let originalVRegisters = vRegisters defaultState
+    let originalVRegisters = vRegisters chip8InitialState
 
-    let initialState = defaultState {
+    let initialState = chip8InitialState {
       currentOpcode = 0xF733,
       indexRegister = 0x17B,
       vRegisters = V.update originalVRegisters $ V.fromList [(0x7,0xAF)],
@@ -130,9 +130,9 @@ spec = do
       updatedProgramCounter `shouldBe` 0x234
 
   describe "storeSpriteLocation" $ do
-    let originalVRegisters = vRegisters defaultState
+    let originalVRegisters = vRegisters chip8InitialState
 
-    let initialState = defaultState {
+    let initialState = chip8InitialState {
       currentOpcode = 0xF529,
       indexRegister = 0x213,
       vRegisters = V.update originalVRegisters $ V.fromList [(0x5,0xA)],

@@ -6,13 +6,13 @@ import Test.Hspec
 
 import Opcodes.Display
 import Types
-import TestHelpers
+import Constants
 import qualified Data.Vector as V
 
 spec :: Spec
 spec = do
   describe "clearScreen" $ do
-    let initialState = defaultState {
+    let initialState = chip8InitialState {
       currentOpcode = 0x00E0,
       graphics = V.replicate 2048 0x1,
       programCounter = 0x2D2
@@ -33,11 +33,11 @@ spec = do
       updatedProgramCounter `shouldBe` 0x2D4
   
   describe "drawGraphics" $ do
-    let originalVRegisters = vRegisters defaultState
-    let originalMemory = memory defaultState
+    let originalVRegisters = vRegisters chip8InitialState
+    let originalMemory = memory chip8InitialState
 
     context "when drawing on clear screen" $ do
-      let initialState = defaultState {
+      let initialState = chip8InitialState {
         currentOpcode = 0xD7B3,
         indexRegister = 0x3AC,
         memory = V.update originalMemory $ V.fromList
@@ -76,9 +76,9 @@ spec = do
         updatedProgramCounter `shouldBe` 0x2F2
 
     context "when drawing on screen with some pixel state" $ do 
-      let originalGraphics = graphics defaultState
+      let originalGraphics = graphics chip8InitialState
 
-      let initialState = defaultState {
+      let initialState = chip8InitialState {
         currentOpcode = 0xDCA3,
         indexRegister = 0x2FD,
         memory = V.update originalMemory $ V.fromList
