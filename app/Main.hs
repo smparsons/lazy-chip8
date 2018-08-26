@@ -15,20 +15,21 @@ main = do
   let filepath = head args
   if null args 
     then putStrLn "Please provide a filepath to the chip8 game." 
-    else startChip8Game filepath 
+    else startEmulator filepath 
 
-startChip8Game :: String -> IO ()
-startChip8Game filepath = do
+startEmulator :: String -> IO ()
+startEmulator filepath = do
   chip8 <- initializeChip8
   chip8WithGame <- loadGameByFilePath filepath chip8
-  setupChip8GameWindow
+  renderer <- setupChip8Graphics
+  appLoop renderer
 
-setupChip8GameWindow :: IO ()
-setupChip8GameWindow = do
+setupChip8Graphics :: IO Renderer
+setupChip8Graphics = do
   initializeAll
   window <- createWindow "Chip-8 Emulator" defaultWindow { windowInitialSize = V2 512 256 }
   renderer <- createRenderer window (-1) defaultRenderer
-  appLoop renderer
+  return renderer
 
 appLoop :: Renderer -> IO ()
 appLoop renderer = do
