@@ -21,24 +21,24 @@ startEmulator :: String -> IO ()
 startEmulator filepath = do
   chip8 <- initializeChip8
   chip8WithGame <- loadGameByFilePath filepath chip8
-  renderer <- setupChip8Graphics
-  appLoop renderer
+  renderer <- setupEmulatorGraphics
+  emulatorLoop renderer
 
-setupChip8Graphics :: IO Renderer
-setupChip8Graphics = do
+setupEmulatorGraphics :: IO Renderer
+setupEmulatorGraphics = do
   initializeAll
   window <- createWindow "Chip-8 Emulator" defaultWindow { windowInitialSize = V2 512 256 }
   renderer <- createRenderer window (-1) defaultRenderer
   return renderer
 
-appLoop :: Renderer -> IO ()
-appLoop renderer = do
+emulatorLoop :: Renderer -> IO ()
+emulatorLoop renderer = do
   events <- pollEvents
   let userHasQuit = any isQuitEvent events
   rendererDrawColor renderer $= V4 0 0 0 0
   clear renderer
   present renderer
-  unless userHasQuit (appLoop renderer)
+  unless userHasQuit (emulatorLoop renderer)
 
 isQuitEvent :: Event -> Bool
 isQuitEvent event = eventPayload event == QuitEvent
