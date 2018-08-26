@@ -33,14 +33,11 @@ setupChip8GameWindow = do
 appLoop :: Renderer -> IO ()
 appLoop renderer = do
   events <- pollEvents
-  let eventIsQPress event =
-        case eventPayload event of
-          KeyboardEvent keyboardEvent ->
-            keyboardEventKeyMotion keyboardEvent == Pressed &&
-            keysymKeycode (keyboardEventKeysym keyboardEvent) == KeycodeQ
-          _ -> False
-      qPressed = any eventIsQPress events
-  rendererDrawColor renderer $= V4 0 0 255 255
+  let userHasQuit = any eventIsQuit events
+  rendererDrawColor renderer $= V4 0 0 0 0
   clear renderer
   present renderer
-  unless qPressed (appLoop renderer)
+  unless userHasQuit (appLoop renderer)
+
+eventIsQuit :: Event -> Bool
+eventIsQuit event = eventPayload event == QuitEvent
