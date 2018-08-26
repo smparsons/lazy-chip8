@@ -33,11 +33,11 @@ setupChip8GameWindow = do
 appLoop :: Renderer -> IO ()
 appLoop renderer = do
   events <- pollEvents
-  let userHasQuit = any eventIsQuit events
+  let userHasQuit = any isQuitEvent events
   rendererDrawColor renderer $= V4 0 0 0 0
   clear renderer
   present renderer
   unless userHasQuit (appLoop renderer)
 
-eventIsQuit :: Event -> Bool
-eventIsQuit event = eventPayload event == QuitEvent
+isQuitEvent :: Event -> Bool
+isQuitEvent event = eventPayload event == QuitEvent
