@@ -5,9 +5,6 @@ module Opcodes.Conditionals
   registersAreNotEqual
 ) where
 
-import Control.Monad.State
-import Control.Lens
-
 import Helpers
 import Types
 
@@ -18,9 +15,8 @@ import Types
 -}
 registerEqualsConstant :: Chip8 ()
 registerEqualsConstant = do
-  chip8State <- get
-  let registerXValue = getRegisterXValue (chip8State^.currentOpcode) (chip8State^.vRegisters)
-      constant = parseTwoDigitConstant $ chip8State^.currentOpcode
+  registerXValue <- getRegisterXValue
+  constant <- parseTwoDigitConstant
   if registerXValue == constant then skipNextInstruction else incrementProgramCounter
 
 {-
@@ -30,9 +26,8 @@ registerEqualsConstant = do
 -}
 registerDoesNotEqualConstant :: Chip8 ()
 registerDoesNotEqualConstant = do
-  chip8State <- get
-  let registerXValue = getRegisterXValue (chip8State^.currentOpcode) (chip8State^.vRegisters)
-      constant = parseTwoDigitConstant $ chip8State^.currentOpcode
+  registerXValue <- getRegisterXValue
+  constant <- parseTwoDigitConstant
   if registerXValue /= constant then skipNextInstruction else incrementProgramCounter
 
 {-
@@ -42,9 +37,8 @@ registerDoesNotEqualConstant = do
 -}
 registersAreEqual :: Chip8 ()
 registersAreEqual = do
-  chip8State <- get
-  let registerXValue = getRegisterXValue (chip8State^.currentOpcode) (chip8State^.vRegisters)
-      registerYValue = getRegisterYValue (chip8State^.currentOpcode) (chip8State^.vRegisters)
+  registerXValue <- getRegisterXValue
+  registerYValue <- getRegisterYValue
   if registerXValue == registerYValue then skipNextInstruction else incrementProgramCounter
 
 {-
@@ -54,7 +48,6 @@ registersAreEqual = do
 -}
 registersAreNotEqual :: Chip8 () 
 registersAreNotEqual = do
-  chip8State <- get
-  let registerXValue = getRegisterXValue (chip8State^.currentOpcode) (chip8State^.vRegisters)
-      registerYValue = getRegisterYValue (chip8State^.currentOpcode) (chip8State^.vRegisters)
+  registerXValue <- getRegisterXValue
+  registerYValue <- getRegisterYValue
   if registerXValue /= registerYValue then skipNextInstruction else incrementProgramCounter

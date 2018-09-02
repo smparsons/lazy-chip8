@@ -16,10 +16,9 @@ import Types
 -}
 setRegisterToConstant :: Chip8 ()
 setRegisterToConstant = do
-  chip8State <- get
-  let registerX = parseRegisterXNumber $ chip8State^.currentOpcode
-      constant = parseTwoDigitConstant $ chip8State^.currentOpcode
-      storeConstant = flip V.update $ V.fromList [(registerX,constant)]
+  registerX <- parseRegisterXNumber
+  constant <- parseTwoDigitConstant
+  let storeConstant = flip V.update $ V.fromList [(registerX,constant)]
   modify (\givenState -> givenState & vRegisters %~ storeConstant)
   incrementProgramCounter 
 
@@ -29,11 +28,10 @@ setRegisterToConstant = do
 -}
 addConstantToRegister :: Chip8 ()
 addConstantToRegister = do
-  chip8State <- get
-  let registerX = parseRegisterXNumber $ chip8State^.currentOpcode
-      registerXValue = getRegisterXValue (chip8State^.currentOpcode) (chip8State^.vRegisters)
-      constant = parseTwoDigitConstant $ chip8State^.currentOpcode
-      total = registerXValue + constant
+  registerX <- parseRegisterXNumber
+  registerXValue <- getRegisterXValue
+  constant <- parseTwoDigitConstant
+  let total = registerXValue + constant
       storeTotal = flip V.update $ V.fromList [(registerX,total)]
   modify (\givenState -> givenState & vRegisters %~ storeTotal)
   incrementProgramCounter

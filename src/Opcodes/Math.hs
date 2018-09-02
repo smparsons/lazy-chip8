@@ -17,11 +17,10 @@ import Types
 -}
 addTwoRegisters :: Chip8 ()
 addTwoRegisters = do
-  chip8State <- get 
-  let registerX = parseRegisterXNumber $ chip8State^.currentOpcode
-      registerXValue = getRegisterXValue (chip8State^.currentOpcode) (chip8State^.vRegisters)
-      registerYValue = getRegisterYValue (chip8State^.currentOpcode) (chip8State^.vRegisters)
-      total = registerXValue + registerYValue
+  registerX <- parseRegisterXNumber
+  registerXValue <- getRegisterXValue
+  registerYValue <- getRegisterYValue
+  let total = registerXValue + registerYValue
       carry = if registerYValue > (0xFF - registerXValue) then 0x1 else 0x0
       storeTotalAndCarry = flip V.update $ V.fromList [(registerX,total),(0xF,carry)]
   modify (\givenState -> givenState & vRegisters %~ storeTotalAndCarry)
@@ -33,11 +32,10 @@ addTwoRegisters = do
 -}
 subtractRegister :: Chip8 ()
 subtractRegister = do
-  chip8State <- get
-  let registerX = parseRegisterXNumber $ chip8State^.currentOpcode
-      registerXValue = getRegisterXValue (chip8State^.currentOpcode) (chip8State^.vRegisters)
-      registerYValue = getRegisterYValue (chip8State^.currentOpcode) (chip8State^.vRegisters)
-      difference = registerXValue - registerYValue
+  registerX <- parseRegisterXNumber
+  registerXValue <- getRegisterXValue
+  registerYValue <- getRegisterYValue
+  let difference = registerXValue - registerYValue
       borrow = if registerYValue > registerXValue then 0x0 else 0x1
       storeDifferenceAndBorrow = flip V.update $ V.fromList [(registerX,difference),(0xF,borrow)]
   modify (\givenState -> givenState & vRegisters %~ storeDifferenceAndBorrow)
@@ -49,11 +47,10 @@ subtractRegister = do
 -}
 subtractTwoRegisters :: Chip8 ()
 subtractTwoRegisters = do
-  chip8State <- get
-  let registerX = parseRegisterXNumber $ chip8State^.currentOpcode
-      registerXValue = getRegisterXValue (chip8State^.currentOpcode) (chip8State^.vRegisters)
-      registerYValue = getRegisterYValue (chip8State^.currentOpcode) (chip8State^.vRegisters)
-      difference = registerYValue - registerXValue
+  registerX <- parseRegisterXNumber
+  registerXValue <- getRegisterXValue
+  registerYValue <- getRegisterYValue  
+  let difference = registerYValue - registerXValue
       borrow = if registerXValue > registerYValue then 0x0 else 0x1
       storeDifferenceAndBorrow = flip V.update $ V.fromList [(registerX,difference),(0xF,borrow)]
   modify (\givenState -> givenState & vRegisters %~ storeDifferenceAndBorrow)

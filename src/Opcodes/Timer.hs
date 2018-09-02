@@ -18,8 +18,8 @@ import Types
 setRegisterToDelayTimer :: Chip8 ()
 setRegisterToDelayTimer = do
   chip8State <- get
-  let registerX = parseRegisterXNumber $ chip8State^.currentOpcode
-      updateRegisterX = flip V.update $ V.fromList [(registerX, chip8State^.delayTimer)]
+  registerX <- parseRegisterXNumber
+  let updateRegisterX = flip V.update $ V.fromList [(registerX, chip8State^.delayTimer)]
   modify (\givenState -> givenState & vRegisters %~ updateRegisterX)
   incrementProgramCounter
 
@@ -29,8 +29,7 @@ setRegisterToDelayTimer = do
 -}
 setDelayTimerToRegister :: Chip8 ()
 setDelayTimerToRegister = do
-  chip8State <- get
-  let registerXValue = getRegisterXValue (chip8State^.currentOpcode) (chip8State^.vRegisters)
+  registerXValue <- getRegisterXValue
   modify (\givenState -> givenState & delayTimer .~ registerXValue)
   incrementProgramCounter
 
@@ -40,7 +39,6 @@ setDelayTimerToRegister = do
 -}
 setSoundTimerToRegister :: Chip8 () 
 setSoundTimerToRegister = do
-  chip8State <- get
-  let registerXValue = getRegisterXValue (chip8State^.currentOpcode) (chip8State^.vRegisters)
+  registerXValue <- getRegisterXValue
   modify (\givenState -> givenState & soundTimer .~ registerXValue)
   incrementProgramCounter

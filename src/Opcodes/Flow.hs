@@ -33,8 +33,7 @@ returnFromSubroutine = do
 -}
 jumpToAddress :: Chip8 ()
 jumpToAddress = do
-  chip8State <- get
-  let newAddress = parseThreeDigitConstant $ chip8State^.currentOpcode
+  newAddress <- parseThreeDigitConstant
   modify (\givenState -> givenState & programCounter .~ newAddress)
 
 {-
@@ -47,7 +46,7 @@ callSubroutine = do
   let storeAddressInStack = flip V.snoc $ chip8State^.programCounter  
   modify (\givenState -> givenState & stack %~ storeAddressInStack)
   modify (\givenState -> givenState & stackPointer +~ 1)
-  let newAddress = parseThreeDigitConstant $ chip8State^.currentOpcode 
+  newAddress <- parseThreeDigitConstant
   modify (\givenState -> givenState & programCounter .~ newAddress)
 
 {-
@@ -57,8 +56,8 @@ callSubroutine = do
 jumpToAddressPlusRegisterZero :: Chip8 () 
 jumpToAddressPlusRegisterZero = do
   chip8State <- get
-  let constant = parseThreeDigitConstant $ chip8State^.currentOpcode
-      registerZeroValue = (chip8State^.vRegisters) V.! 0x0
+  constant <- parseThreeDigitConstant
+  let registerZeroValue = (chip8State^.vRegisters) V.! 0x0
       convertedRegisterValue = fromIntegral registerZeroValue :: Word16
       newAddress = constant + convertedRegisterValue
   modify (\givenState -> givenState & programCounter .~ newAddress)

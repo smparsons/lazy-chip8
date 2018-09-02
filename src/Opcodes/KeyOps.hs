@@ -19,9 +19,9 @@ import Types
 -}
 keyIsPressed :: Chip8 ()
 keyIsPressed = do
-  chip8State <- get 
-  let registerXValue = getRegisterXValue (chip8State^.currentOpcode) (chip8State^.vRegisters)
-      key = fromIntegral registerXValue :: Int
+  chip8State <- get
+  registerXValue <- getRegisterXValue 
+  let key = fromIntegral registerXValue :: Int
       keyValue = (chip8State^.keyState) V.! key
   if keyValue == 0x1 then skipNextInstruction else incrementProgramCounter
 
@@ -33,8 +33,8 @@ keyIsPressed = do
 keyIsNotPressed :: Chip8 ()
 keyIsNotPressed = do
   chip8State <- get
-  let registerXValue = getRegisterXValue (chip8State^.currentOpcode) (chip8State^.vRegisters)
-      key = fromIntegral registerXValue :: Int
+  registerXValue <- getRegisterXValue
+  let key = fromIntegral registerXValue :: Int
       keyValue = (chip8State^.keyState) V.! key
   if keyValue == 0x0 then skipNextInstruction else incrementProgramCounter
 
@@ -46,8 +46,8 @@ keyIsNotPressed = do
 awaitKeyPress :: Chip8 ()
 awaitKeyPress = do
   chip8State <- get
-  let registerX = parseRegisterXNumber $ chip8State^.currentOpcode
-      pressedKey = V.findIndex (\key -> key == 0x1) (chip8State^.keyState)
+  registerX <- parseRegisterXNumber
+  let pressedKey = V.findIndex (\key -> key == 0x1) (chip8State^.keyState)
   case pressedKey of
     Nothing -> return ()
     Just key -> do

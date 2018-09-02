@@ -23,11 +23,10 @@ import Types
 -}
 bitwiseOr :: Chip8 ()
 bitwiseOr = do
-  chip8State <- get
-  let registerX = parseRegisterXNumber $ chip8State^.currentOpcode 
-      registerXValue = getRegisterXValue (chip8State^.currentOpcode) (chip8State^.vRegisters)
-      registerYValue = getRegisterYValue (chip8State^.currentOpcode) (chip8State^.vRegisters)
-      bitwiseOrResult = registerXValue .|. registerYValue
+  registerX <- parseRegisterXNumber
+  registerXValue <- getRegisterXValue
+  registerYValue <- getRegisterYValue 
+  let bitwiseOrResult = registerXValue .|. registerYValue
       storeBitwiseOrResult = flip V.update $ V.fromList [(registerX,bitwiseOrResult)]
   modify (\givenState -> givenState & vRegisters %~ storeBitwiseOrResult)
   incrementProgramCounter 
@@ -38,11 +37,10 @@ bitwiseOr = do
 -}
 bitwiseAnd :: Chip8 ()
 bitwiseAnd = do
-  chip8State <- get
-  let registerX = parseRegisterXNumber $ chip8State^.currentOpcode 
-      registerXValue = getRegisterXValue (chip8State^.currentOpcode) (chip8State^.vRegisters)
-      registerYValue = getRegisterYValue (chip8State^.currentOpcode) (chip8State^.vRegisters)
-      bitwiseAndResult = registerXValue .&. registerYValue
+  registerX <- parseRegisterXNumber
+  registerXValue <- getRegisterXValue
+  registerYValue <- getRegisterYValue 
+  let bitwiseAndResult = registerXValue .&. registerYValue
       storeBitwiseAndResult = flip V.update $ V.fromList [(registerX,bitwiseAndResult)]
   modify (\givenState -> givenState & vRegisters %~ storeBitwiseAndResult)
   incrementProgramCounter
@@ -54,9 +52,9 @@ bitwiseAnd = do
 randomBitwiseAnd :: Chip8 ()
 randomBitwiseAnd = do
   chip8State <- get
-  let registerX = parseRegisterXNumber $ chip8State^.currentOpcode
-      constant = parseTwoDigitConstant $ chip8State^.currentOpcode
-      randomResultTuple = randomR (0, 255) (chip8State^.randomNumberSeed)
+  registerX <- parseRegisterXNumber
+  constant <- parseTwoDigitConstant
+  let randomResultTuple = randomR (0, 255) (chip8State^.randomNumberSeed)
       randomValue = fst randomResultTuple :: Word8
       newSeed = snd randomResultTuple
       bitwiseAndResult = constant .&. randomValue
@@ -71,11 +69,10 @@ randomBitwiseAnd = do
 -}
 bitwiseXor :: Chip8 ()
 bitwiseXor = do
-  chip8State <- get
-  let registerX = parseRegisterXNumber $ chip8State^.currentOpcode 
-      registerXValue = getRegisterXValue (chip8State^.currentOpcode) (chip8State^.vRegisters)
-      registerYValue = getRegisterYValue (chip8State^.currentOpcode) (chip8State^.vRegisters)
-      bitwiseXorResult = registerXValue `xor` registerYValue
+  registerX <- parseRegisterXNumber
+  registerXValue <- getRegisterXValue
+  registerYValue <- getRegisterYValue 
+  let bitwiseXorResult = registerXValue `xor` registerYValue
       storeBitwiseXorResult = flip V.update $ V.fromList [(registerX,bitwiseXorResult)]
   modify (\givenState -> givenState & vRegisters %~ storeBitwiseXorResult)
   incrementProgramCounter
@@ -86,10 +83,9 @@ bitwiseXor = do
 -}
 shiftRight :: Chip8 ()
 shiftRight = do
-  chip8State <- get
-  let registerX = parseRegisterXNumber $ chip8State^.currentOpcode 
-      registerYValue = getRegisterYValue (chip8State^.currentOpcode) (chip8State^.vRegisters)
-      leastSignificantBit = registerYValue .&. 0x1
+  registerX <- parseRegisterXNumber
+  registerYValue <- getRegisterYValue 
+  let leastSignificantBit = registerYValue .&. 0x1
       bitShiftResult = registerYValue `shiftR` 1
       storeBitShiftResult = flip V.update $ V.fromList [(registerX,bitShiftResult),(0xF,leastSignificantBit)]
   modify (\givenState -> givenState & vRegisters %~ storeBitShiftResult)
@@ -101,11 +97,10 @@ shiftRight = do
 -}
 shiftLeft :: Chip8 ()
 shiftLeft = do
-  chip8State <- get
-  let registerX = parseRegisterXNumber $ chip8State^.currentOpcode 
-      registerY = parseRegisterYNumber $ chip8State^.currentOpcode
-      registerYValue = getRegisterYValue (chip8State^.currentOpcode) (chip8State^.vRegisters)
-      mostSignificantBit = (registerYValue .&. 0x80) `shiftR` 7
+  registerX <- parseRegisterXNumber
+  registerY <- parseRegisterYNumber
+  registerYValue <- getRegisterYValue 
+  let mostSignificantBit = (registerYValue .&. 0x80) `shiftR` 7
       bitShiftResult = registerYValue `shiftL` 1
       storeBitShiftResult = flip V.update $ V.fromList
         [ (registerX,bitShiftResult)

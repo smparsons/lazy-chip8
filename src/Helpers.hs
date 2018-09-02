@@ -3,6 +3,7 @@ module Helpers
   getRegisterXValue,
   parseRegisterYNumber,
   getRegisterYValue,
+  parseOneDigitConstant,
   parseTwoDigitConstant,
   parseThreeDigitConstant,
   incrementProgramCounter,
@@ -18,31 +19,34 @@ import Control.Lens
 import Types
 import Constants
 
---Given an opcode with the format 0x*XY*, return X
-parseRegisterXNumber :: Word16 -> Int 
-parseRegisterXNumber opcode = (fromIntegral $ shiftR (opcode .&. 0x0F00) 8) :: Int
+parseRegisterXNumber :: Chip8 Int 
+parseRegisterXNumber = 
+  gets (\givenState -> (fromIntegral $ (givenState^.currentOpcode .&. 0x0F00) `shiftR` 8) :: Int)
 
---Given an opcode with the format 0x*XY* and a vector of registers, return the value stored in register X
-getRegisterXValue :: Word16 -> V.Vector Word8 -> Word8
-getRegisterXValue opcode registers = registers V.! registerNumber where
-  registerNumber = parseRegisterXNumber opcode
+getRegisterXValue :: Chip8 Word8
+getRegisterXValue = do
+  chip8State <- get
+  registerNumber <- parseRegisterXNumber  
+  return $ (chip8State^.vRegisters) V.! registerNumber
 
---Given an opcode with the format 0x*XY*, return Y
-parseRegisterYNumber :: Word16 -> Int
-parseRegisterYNumber opcode = (fromIntegral $ shiftR (opcode .&. 0x00F0) 4) :: Int
+parseRegisterYNumber :: Chip8 Int
+parseRegisterYNumber = 
+  gets (\givenState -> (fromIntegral $ (givenState^.currentOpcode .&. 0x00F0) `shiftR` 4) :: Int)
 
---Given an opcode with the format 0x*XY* and a vector of registers, return the value stored in register Y
-getRegisterYValue :: Word16 -> V.Vector Word8 -> Word8
-getRegisterYValue opcode registers = registers V.! registerNumber where 
-  registerNumber = parseRegisterYNumber opcode
+getRegisterYValue :: Chip8 Word8
+getRegisterYValue = do
+  chip8State <- get
+  registerNumber <- parseRegisterYNumber 
+  return $ (chip8State^.vRegisters) V.! registerNumber 
 
---Given an opcode with the format 0x**NN, return NN
-parseTwoDigitConstant :: Word16 -> Word8
-parseTwoDigitConstant opcode = (fromIntegral $ opcode .&. 0x00FF) :: Word8
+parseOneDigitConstant :: Chip8 Word8
+parseOneDigitConstant = gets (\givenState -> (fromIntegral $ (givenState^.currentOpcode) .&. 0x000F) :: Word8)
 
---Given an opcode with the format 0x*NNN, return NNN
-parseThreeDigitConstant :: Word16 -> Word16
-parseThreeDigitConstant opcode = (fromIntegral $ opcode .&. 0x0FFF) :: Word16
+parseTwoDigitConstant :: Chip8 Word8
+parseTwoDigitConstant = gets (\givenState -> (fromIntegral $ (givenState^.currentOpcode) .&. 0x00FF) :: Word8)
+
+parseThreeDigitConstant :: Chip8 Word16
+parseThreeDigitConstant = gets (\givenState -> (givenState^.currentOpcode) .&. 0x0FFF)
 
 incrementProgramCounter :: Chip8 ()
 incrementProgramCounter = modify (\givenState -> givenState & programCounter +~ programCounterIncrement)
