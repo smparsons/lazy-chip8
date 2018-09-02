@@ -5,7 +5,11 @@ import System.Environment
 import SDL
 import Linear (V4(..))
 import Control.Monad (unless)
+import qualified Data.ByteString as BS
+import Control.Monad.State
+import System.Random
 
+import Constants
 import Chip8
 import Types
 
@@ -19,8 +23,11 @@ main = do
 
 startEmulator :: String -> IO ()
 startEmulator filepath = do
-  chip8 <- initializeChip8
-  chip8WithGame <- loadGameByFilePath filepath chip8
+  newSeed <- newStdGen
+  let chip8State = execState (initializeChip8 newSeed) chip8InitialState
+  contents <- BS.readFile filepath
+  let game = BS.unpack contents
+  let chip8State' = execState (loadGameIntoMemory game) chip8State
   renderer <- setupEmulatorGraphics
   emulatorLoop renderer
 

@@ -4,12 +4,19 @@ module Helpers
   parseRegisterYNumber,
   getRegisterYValue,
   parseTwoDigitConstant,
-  parseThreeDigitConstant
+  parseThreeDigitConstant,
+  incrementProgramCounter,
+  skipNextInstruction
 ) where
 
 import Data.Word
 import Data.Bits
 import qualified Data.Vector as V
+import Control.Monad.State
+import Control.Lens
+
+import Types
+import Constants
 
 --Given an opcode with the format 0x*XY*, return X
 parseRegisterXNumber :: Word16 -> Int 
@@ -36,3 +43,9 @@ parseTwoDigitConstant opcode = (fromIntegral $ opcode .&. 0x00FF) :: Word8
 --Given an opcode with the format 0x*NNN, return NNN
 parseThreeDigitConstant :: Word16 -> Word16
 parseThreeDigitConstant opcode = (fromIntegral $ opcode .&. 0x0FFF) :: Word16
+
+incrementProgramCounter :: Chip8 ()
+incrementProgramCounter = modify (\givenState -> givenState & programCounter +~ programCounterIncrement)
+
+skipNextInstruction :: Chip8 ()
+skipNextInstruction = modify (\givenState -> givenState & programCounter +~ (programCounterIncrement * 2))

@@ -5,9 +5,10 @@ module Opcodes.Flow
   jumpToAddressPlusRegisterZero
 ) where
 
-import Data.Bits
 import Data.Word
 import qualified Data.Vector as V
+import Control.Monad.State
+import Control.Lens
 
 import Types
 import Constants
@@ -17,61 +18,47 @@ import Helpers
   0x00EE
   Returns from a subroutine.
 -}
-returnFromSubroutine :: Chip8 -> Chip8
-returnFromSubroutine chip8State =
-  chip8State {
-    stack = V.init originalStack, 
-    stackPointer = originalStackPointer - 1,
-    programCounter = lastAddress + programCounterIncrement
-  }
-  where 
-    originalStack = stack chip8State
-    originalStackPointer = stackPointer chip8State
-    lastAddress = V.last originalStack
+returnFromSubroutine :: Chip8 ()
+returnFromSubroutine = do
+  chip8State <- get
+  let lastAddress = V.last $ chip8State^.stack
+  modify (\givenState -> givenState & stack %~ V.init)
+  modify (\givenState -> givenState & stackPointer -~ 1)
+  let newAddress = lastAddress + programCounterIncrement 
+  modify (\givenState -> givenState & programCounter .~ newAddress)
 
 {-
   0x1NNN
   Jumps to address NNN.
 -}
-jumpToAddress :: Chip8 -> Chip8 
-jumpToAddress chip8State = 
-  chip8State { 
-    programCounter = newAddress
-  }
-  where 
-    opcode = currentOpcode chip8State
-    newAddress = parseThreeDigitConstant opcode 
+jumpToAddress :: Chip8 ()
+jumpToAddress = do
+  chip8State <- get
+  let newAddress = parseThreeDigitConstant $ chip8State^.currentOpcode
+  modify (\givenState -> givenState & programCounter .~ newAddress)
 
 {-
   0x2NNN
   Calls subroutine at NNN.
 -}
-callSubroutine :: Chip8 -> Chip8 
-callSubroutine chip8State = 
-  chip8State { 
-    stack = V.snoc originalStack originalProgramCounter, 
-    stackPointer = originalStackPointer + 1, 
-    programCounter = opcode .&. 0x0FFF
-  }
-  where 
-    opcode = currentOpcode chip8State
-    originalStack = stack chip8State 
-    originalStackPointer = stackPointer chip8State 
-    originalProgramCounter = programCounter chip8State 
+callSubroutine :: Chip8 ()
+callSubroutine = do
+  chip8State <- get
+  let storeAddressInStack = flip V.snoc $ chip8State^.programCounter  
+  modify (\givenState -> givenState & stack %~ storeAddressInStack)
+  modify (\givenState -> givenState & stackPointer +~ 1)
+  let newAddress = parseThreeDigitConstant $ chip8State^.currentOpcode 
+  modify (\givenState -> givenState & programCounter .~ newAddress)
 
 {-
   0xBNNN
   Jumps to the address NNN plus V0.
 -}
-jumpToAddressPlusRegisterZero :: Chip8 -> Chip8 
-jumpToAddressPlusRegisterZero chip8State =
-  chip8State { 
-    programCounter = newAddress
-  }
-  where 
-    opcode = currentOpcode chip8State
-    originalVRegisters = vRegisters chip8State 
-    constant = parseThreeDigitConstant opcode
-    registerZeroValue = originalVRegisters V.! 0x0
-    convertedRegisterValue = (fromIntegral registerZeroValue) :: Word16
-    newAddress = constant + convertedRegisterValue
+jumpToAddressPlusRegisterZero :: Chip8 () 
+jumpToAddressPlusRegisterZero = do
+  chip8State <- get
+  let constant = parseThreeDigitConstant $ chip8State^.currentOpcode
+      registerZeroValue = (chip8State^.vRegisters) V.! 0x0
+      convertedRegisterValue = fromIntegral registerZeroValue :: Word16
+      newAddress = constant + convertedRegisterValue
+  modify (\givenState -> givenState & programCounter .~ newAddress)

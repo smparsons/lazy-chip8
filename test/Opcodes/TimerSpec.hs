@@ -8,66 +8,68 @@ import Opcodes.Timer
 import Types
 import Constants
 import qualified Data.Vector as V
+import Control.Monad.State
+import Control.Lens
 
 spec :: Spec
 spec = do
   describe "setRegisterToDelayTimer" $ do
-    let originalVRegisters = vRegisters chip8InitialState
+    let originalVRegisters = chip8InitialState^.vRegisters
 
     let initialState = chip8InitialState {
-      currentOpcode = 0xFD07,
-      vRegisters = V.update originalVRegisters $ V.fromList [(0xD,0x15)],
-      delayTimer = 0x2A,
-      programCounter = 0x15B
+      _currentOpcode = 0xFD07,
+      _vRegisters = V.update originalVRegisters $ V.fromList [(0xD,0x15)],
+      _delayTimer = 0x2A,
+      _programCounter = 0x15B
     }
 
-    let resultingState = setRegisterToDelayTimer initialState
+    let resultingState = execState setRegisterToDelayTimer initialState
 
     it "assigns register x to the value of the delay timer" $ do
-      let resultingVRegisters = vRegisters resultingState
+      let resultingVRegisters = resultingState^.vRegisters
       let register = resultingVRegisters V.! 0xD
       register `shouldBe` 0x2A
 
     it "increments the program counter" $ do
-      let updatedProgramCounter = programCounter resultingState
+      let updatedProgramCounter = resultingState^.programCounter
       updatedProgramCounter `shouldBe` 0x15D
 
   describe "setDelayTimerToRegister" $ do
-    let originalVRegisters = vRegisters chip8InitialState
+    let originalVRegisters = chip8InitialState^.vRegisters
 
     let initialState = chip8InitialState {
-      currentOpcode = 0xF815,
-      vRegisters = V.update originalVRegisters $ V.fromList [(0x8,0x10)],
-      delayTimer = 0x31,
-      programCounter = 0x18A
+      _currentOpcode = 0xF815,
+      _vRegisters = V.update originalVRegisters $ V.fromList [(0x8,0x10)],
+      _delayTimer = 0x31,
+      _programCounter = 0x18A
     }
 
-    let resultingState = setDelayTimerToRegister initialState
+    let resultingState = execState setDelayTimerToRegister initialState
 
     it "asigns the delay timer to the value stored in register x" $ do
-      let resultingDelayTimer = delayTimer resultingState
+      let resultingDelayTimer = resultingState^.delayTimer
       resultingDelayTimer `shouldBe` 0x10
 
     it "increments the program counter" $ do
-      let updatedProgramCounter = programCounter resultingState
+      let updatedProgramCounter = resultingState^.programCounter
       updatedProgramCounter `shouldBe` 0x18C 
 
   describe "setSoundTimerToRegister" $ do
-    let originalVRegisters = vRegisters chip8InitialState
+    let originalVRegisters = chip8InitialState^.vRegisters
 
     let initialState = chip8InitialState {
-      currentOpcode = 0xF218,
-      vRegisters = V.update originalVRegisters $ V.fromList [(0x2,0x2C)],
-      soundTimer = 0x33,
-      programCounter = 0x12C
+      _currentOpcode = 0xF218,
+      _vRegisters = V.update originalVRegisters $ V.fromList [(0x2,0x2C)],
+      _soundTimer = 0x33,
+      _programCounter = 0x12C
     }
 
-    let resultingState = setSoundTimerToRegister initialState
+    let resultingState = execState setSoundTimerToRegister initialState
 
     it "assigns the sound timer to the value stored in register x" $ do
-      let resultingSoundTimer = soundTimer resultingState
+      let resultingSoundTimer = resultingState^.soundTimer
       resultingSoundTimer `shouldBe` 0x2C
 
     it "increments the program counter" $ do
-      let updatedProgramCounter = programCounter resultingState
+      let updatedProgramCounter = resultingState^.programCounter
       updatedProgramCounter `shouldBe` 0x12E

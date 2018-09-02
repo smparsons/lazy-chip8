@@ -8,50 +8,52 @@ import Opcodes.Display
 import Types
 import Constants
 import qualified Data.Vector as V
+import Control.Monad.State
+import Control.Lens
 
 spec :: Spec
 spec = do
   describe "clearScreen" $ do
     let initialState = chip8InitialState {
-      currentOpcode = 0x00E0,
-      graphics = V.replicate 2048 0x1,
-      programCounter = 0x2D2
+      _currentOpcode = 0x00E0,
+      _graphics = V.replicate 2048 0x1,
+      _programCounter = 0x2D2
     }
-    let resultingState = clearScreen initialState
+    let resultingState = execState clearScreen initialState
 
     it "clears the screen" $ do
-      let updatedGraphics = graphics resultingState
+      let updatedGraphics = resultingState^.graphics
       let expectedGraphics = V.replicate 2048 0x0
       updatedGraphics `shouldBe` expectedGraphics
 
     it "sets draw fag to true" $ do
-      let updatedDrawFlag = drawFlag resultingState
+      let updatedDrawFlag = resultingState^.drawFlag
       updatedDrawFlag `shouldBe` True
 
     it "increments the program counter" $ do
-      let updatedProgramCounter = programCounter resultingState 
+      let updatedProgramCounter = resultingState^.programCounter
       updatedProgramCounter `shouldBe` 0x2D4
   
   describe "drawGraphics" $ do
-    let originalVRegisters = vRegisters chip8InitialState
-    let originalMemory = memory chip8InitialState
+    let originalVRegisters = chip8InitialState^.vRegisters
+    let originalMemory = chip8InitialState^.memory
 
     context "when drawing on clear screen" $ do
       let initialState = chip8InitialState {
-        currentOpcode = 0xD7B3,
-        indexRegister = 0x3AC,
-        memory = V.update originalMemory $ V.fromList
+        _currentOpcode = 0xD7B3,
+        _indexRegister = 0x3AC,
+        _memory = V.update originalMemory $ V.fromList
           [ (0x3AC,0x25)
           , (0x3AD,0x3C)
           , (0x3AE,0xFD) ], 
-        vRegisters = V.update originalVRegisters $ V.fromList [(0x7,0x13),(0xB,0xA),(0xF,0x0)],
-        programCounter = 0x2F0
+        _vRegisters = V.update originalVRegisters $ V.fromList [(0x7,0x13),(0xB,0xA),(0xF,0x0)],
+        _programCounter = 0x2F0
       }
-      let resultingState = drawGraphics initialState
-      let resultingVRegisters = vRegisters resultingState 
+      let resultingState = execState drawGraphics initialState
+      let resultingVRegisters = resultingState^.vRegisters
 
       it "correctly updates pixel state using the xor operation" $ do 
-        let updatedGraphics = graphics resultingState
+        let updatedGraphics = resultingState^.graphics
         let numberOfBytesToSlice = 8
 
         let firstRowGraphicSlice = V.toList $ V.slice (0x13 + (0xA * 64)) numberOfBytesToSlice updatedGraphics 
@@ -68,24 +70,24 @@ spec = do
         carry `shouldBe` 0x0
 
       it "sets draw flag to true" $ do
-        let updatedDrawFlag = drawFlag resultingState
+        let updatedDrawFlag = resultingState^.drawFlag
         updatedDrawFlag `shouldBe` True 
         
       it "increments the program counter" $ do
-        let updatedProgramCounter = programCounter resultingState
+        let updatedProgramCounter = resultingState^.programCounter
         updatedProgramCounter `shouldBe` 0x2F2
 
     context "when drawing on screen with some pixel state" $ do 
-      let originalGraphics = graphics chip8InitialState
+      let originalGraphics = chip8InitialState^.graphics
 
       let initialState = chip8InitialState {
-        currentOpcode = 0xDCA3,
-        indexRegister = 0x2FD,
-        memory = V.update originalMemory $ V.fromList
+        _currentOpcode = 0xDCA3,
+        _indexRegister = 0x2FD,
+        _memory = V.update originalMemory $ V.fromList
           [ (0x2FD, 0x42)
           , (0x2FE, 0xFB)
           , (0x2FF, 0x1A) ], 
-        graphics = V.update originalGraphics $ V.fromList 
+        _graphics = V.update originalGraphics $ V.fromList 
           [ (0x1C + (0x15 * 64), 1)
           , (0x1E + (0x15 * 64), 1)
           , (0x20 + (0x15 * 64), 1)
@@ -94,14 +96,14 @@ spec = do
           , (0x1F + (0x16 * 64), 1)
           , (0x1A + (0x17 * 64), 1)
           , (0x1C + (0x17 * 64), 1) ],
-        vRegisters = V.update originalVRegisters $ V.fromList [(0xC,0x1A),(0xA,0x15),(0xF,0x0)],
-        programCounter = 0x3CA
+        _vRegisters = V.update originalVRegisters $ V.fromList [(0xC,0x1A),(0xA,0x15),(0xF,0x0)],
+        _programCounter = 0x3CA
       }
-      let resultingState = drawGraphics initialState
-      let resultingVRegisters = vRegisters resultingState 
+      let resultingState = execState drawGraphics initialState
+      let resultingVRegisters = resultingState^.vRegisters
 
       it "correctly updates pixel state using the xor operation" $ do 
-        let updatedGraphics = graphics resultingState
+        let updatedGraphics = resultingState^.graphics
         let numberOfBytesToSlice = 8
 
         let firstRowGraphicSlice = V.toList $ V.slice (0x1A + (0x15 * 64)) numberOfBytesToSlice updatedGraphics 
@@ -118,9 +120,9 @@ spec = do
         carry `shouldBe` 0x1
 
       it "sets draw flag to true" $ do
-        let updatedDrawFlag = drawFlag resultingState
+        let updatedDrawFlag = resultingState^.drawFlag
         updatedDrawFlag `shouldBe` True 
         
       it "increments the program counter" $ do
-        let updatedProgramCounter = programCounter resultingState
+        let updatedProgramCounter = resultingState^.programCounter
         updatedProgramCounter `shouldBe` 0x3CC

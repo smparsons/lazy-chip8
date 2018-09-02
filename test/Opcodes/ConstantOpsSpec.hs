@@ -8,45 +8,47 @@ import Opcodes.ConstantOps
 import Types
 import Constants
 import qualified Data.Vector as V
+import Control.Monad.State
+import Control.Lens
 
 spec :: Spec
 spec = do
   describe "setRegisterToConstant" $ do
-    let originalVRegisters = vRegisters chip8InitialState
+    let originalVRegisters = chip8InitialState^.vRegisters
 
     let initialState = chip8InitialState {
-      currentOpcode = 0x6C23,
-      vRegisters = V.update originalVRegisters $ V.fromList [(0xC, 0x5A)],
-      programCounter = 0x180
+      _currentOpcode = 0x6C23,
+      _vRegisters = V.update originalVRegisters $ V.fromList [(0xC, 0x5A)],
+      _programCounter = 0x180
     }
 
-    let resultingState = setRegisterToConstant initialState
+    let resultingState = execState setRegisterToConstant initialState
 
     it "sets register to constant" $ do
-      let resultingVRegisters = vRegisters resultingState
+      let resultingVRegisters = resultingState^.vRegisters
       let register = resultingVRegisters V.! 0xC
       register `shouldBe` 0x23
 
     it "increments the program counter" $ do
-      let updatedProgramCounter = programCounter resultingState 
+      let updatedProgramCounter = resultingState^.programCounter
       updatedProgramCounter `shouldBe` 0x182
 
   describe "addConstantToRegister" $ do
-    let originalVRegisters = vRegisters chip8InitialState
+    let originalVRegisters = chip8InitialState^.vRegisters
 
     let initialState = chip8InitialState {
-      currentOpcode = 0x7EA2,
-      vRegisters = V.update originalVRegisters $ V.fromList [(0xE, 0x15)],
-      programCounter = 0x210
+      _currentOpcode = 0x7EA2,
+      _vRegisters = V.update originalVRegisters $ V.fromList [(0xE, 0x15)],
+      _programCounter = 0x210
     }
 
-    let resultingState = addConstantToRegister initialState
+    let resultingState = execState addConstantToRegister initialState
 
     it "adds constant to register" $ do
-      let resultingVRegisters = vRegisters resultingState
+      let resultingVRegisters = resultingState^.vRegisters
       let register = resultingVRegisters V.! 0xE
       register `shouldBe` 0xB7
 
     it "increments the program counter" $ do
-      let updatedProgramCounter = programCounter resultingState
+      let updatedProgramCounter = resultingState^.programCounter
       updatedProgramCounter `shouldBe` 0x212

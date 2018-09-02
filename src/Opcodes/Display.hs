@@ -4,8 +4,9 @@ module Opcodes.Display
 ) where
 
 import qualified Data.Vector as V
-
 import Data.Bits
+import Control.Monad.State
+import Control.Lens
 
 import Types
 import Constants
@@ -15,15 +16,11 @@ import Helpers
   0x00E0
   Clears the screen.
 -}
-clearScreen :: Chip8 -> Chip8 
-clearScreen chip8State = 
-  chip8State { 
-    graphics = V.replicate 2048 0x00, 
-    drawFlag = True,
-    programCounter = originalProgramCounter + programCounterIncrement
-  }
-  where
-    originalProgramCounter = programCounter chip8State 
+clearScreen :: Chip8 ()
+clearScreen = do
+  modify (\givenState -> givenState & graphics .~ (V.replicate 2048 0x00))
+  modify (\givenState -> givenState & drawFlag .~ True)
+  incrementProgramCounter 
 
 {-
   0xDXYN
@@ -33,38 +30,31 @@ clearScreen chip8State =
   screen pixels are flipped from set to unset when the sprite is drawn, and to 0 if that 
   doesn’t happen
 -}
-drawGraphics :: Chip8 -> Chip8
-drawGraphics chip8State =
-  chip8State {
-    vRegisters = V.update originalVRegisters $ V.fromList [(0xF, collisionResult)],
-    graphics = V.update originalGraphics $ V.fromList pixelChanges,
-    drawFlag = True,
-    programCounter = originalProgramCounter + programCounterIncrement
-  }
-  where 
-    originalVRegisters = vRegisters chip8State
-    originalProgramCounter = programCounter chip8State
-    originalGraphics = graphics chip8State
-    originalMemory = memory chip8State
-    opcode = currentOpcode chip8State
-    indexRegisterValue = indexRegister chip8State
-    coordinateX = (fromIntegral $ getRegisterXValue opcode originalVRegisters) :: Int
-    coordinateY = (fromIntegral $ getRegisterYValue opcode originalVRegisters) :: Int
-    spriteHeight = (fromIntegral $ opcode .&. 0x000F) :: Int
-    spriteWidth = 8
-    pixelChangesAndCollisions = 
-      map
-        (\(columnOffset,rowOffset) -> 
-          let convertedIndexRegisterValue = fromIntegral indexRegisterValue :: Int
-              index = coordinateX + columnOffset + ((coordinateY + rowOffset) * chip8NumberOfColumns)
-              graphicsPixel = originalGraphics V.! index
-              memoryValue = originalMemory V.! (convertedIndexRegisterValue + rowOffset)
-              memoryPixel = 
-                (memoryValue .&. (0x80 `shiftR` columnOffset)) `shiftR` ((spriteWidth - 1) - columnOffset)
-              result = graphicsPixel `xor` memoryPixel
-              collision = graphicsPixel == 1 && memoryPixel == 1
-              in ((index, result), collision))
-        [(columnOffset,rowOffset) | columnOffset <- [0..spriteWidth-1], rowOffset <- [0..spriteHeight-1]]
-    pixelChanges = map (\((index, result), _) -> (index, result)) pixelChangesAndCollisions
-    collisionOccurred = any (\((_, _), collision) -> collision) pixelChangesAndCollisions
-    collisionResult = if collisionOccurred then 0x1 else 0x0
+drawGraphics :: Chip8 ()
+drawGraphics = do
+  chip8State <- get
+  let coordinateX = (fromIntegral $ getRegisterXValue (chip8State^.currentOpcode) (chip8State^.vRegisters)) :: Int
+      coordinateY = (fromIntegral $ getRegisterYValue (chip8State^.currentOpcode) (chip8State^.vRegisters)) :: Int
+      spriteHeight = (fromIntegral $ chip8State^.currentOpcode .&. 0x000F) :: Int
+      spriteWidth = 8
+      pixelChangesAndCollisions = 
+        map
+          (\(colOffset,rowOffset) -> 
+            let convertedIndexRegisterValue = (fromIntegral $ chip8State^.indexRegister) :: Int
+                currentIndex = coordinateX + colOffset + ((coordinateY + rowOffset) * chip8NumberOfColumns)
+                graphicsPixel = (chip8State^.graphics) V.! currentIndex
+                memoryValue = (chip8State^.memory) V.! (convertedIndexRegisterValue + rowOffset)
+                memoryPixel = 
+                  (memoryValue .&. (0x80 `shiftR` colOffset)) `shiftR` ((spriteWidth - 1) - colOffset)
+                result = graphicsPixel `xor` memoryPixel
+                collision = graphicsPixel == 1 && memoryPixel == 1
+                in ((currentIndex, result), collision))
+          [(colOffset,rowOffset) | colOffset <- [0..spriteWidth-1], rowOffset <- [0..spriteHeight-1]]
+      pixelChanges = map (\((currentIndex, result), _) -> (currentIndex, result)) pixelChangesAndCollisions
+      collisionResult = if (any (\((_, _), collision) -> collision) pixelChangesAndCollisions) then 0x1 else 0x0
+      updateGraphics = flip V.update $ V.fromList pixelChanges
+      storeCollision = flip V.update $ V.fromList [(0xF, collisionResult)]
+  modify (\givenState -> givenState & graphics %~ updateGraphics)
+  modify (\givenState -> givenState & vRegisters %~ storeCollision)
+  modify (\givenState -> givenState & drawFlag .~ True)
+  incrementProgramCounter

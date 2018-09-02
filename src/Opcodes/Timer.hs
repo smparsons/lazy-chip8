@@ -5,57 +5,42 @@ module Opcodes.Timer
 ) where
 
 import qualified Data.Vector as V
+import Control.Monad.State
+import Control.Lens
 
 import Helpers
 import Types
-import Constants
 
 {-
   0xFX07
   Sets VX to the value of the delay timer.
 -}
-setRegisterToDelayTimer :: Chip8 -> Chip8
-setRegisterToDelayTimer chip8State =
-  chip8State {
-    vRegisters = V.update originalVRegisters $ V.fromList [(registerX,delayTimerValue)],
-    programCounter = originalProgramCounter + programCounterIncrement
-  }
-  where 
-    originalVRegisters = vRegisters chip8State
-    originalProgramCounter = programCounter chip8State
-    opcode = currentOpcode chip8State 
-    registerX = parseRegisterXNumber opcode 
-    delayTimerValue = delayTimer chip8State 
+setRegisterToDelayTimer :: Chip8 ()
+setRegisterToDelayTimer = do
+  chip8State <- get
+  let registerX = parseRegisterXNumber $ chip8State^.currentOpcode
+      updateRegisterX = flip V.update $ V.fromList [(registerX, chip8State^.delayTimer)]
+  modify (\givenState -> givenState & vRegisters %~ updateRegisterX)
+  incrementProgramCounter
 
 {-
   0xFX15
   Sets the delay timer to VX.
 -}
-setDelayTimerToRegister :: Chip8 -> Chip8 
-setDelayTimerToRegister chip8State =
-  chip8State {
-    delayTimer = registerXValue,
-    programCounter = originalProgramCounter + programCounterIncrement
-  }
-  where 
-    originalVRegisters = vRegisters chip8State
-    originalProgramCounter = programCounter chip8State
-    opcode = currentOpcode chip8State 
-    registerXValue = getRegisterXValue opcode originalVRegisters
+setDelayTimerToRegister :: Chip8 ()
+setDelayTimerToRegister = do
+  chip8State <- get
+  let registerXValue = getRegisterXValue (chip8State^.currentOpcode) (chip8State^.vRegisters)
+  modify (\givenState -> givenState & delayTimer .~ registerXValue)
+  incrementProgramCounter
 
 {-
   0xFX18
   Sets the sound timer to VX.
 -}
-setSoundTimerToRegister :: Chip8 -> Chip8 
-setSoundTimerToRegister chip8State =
-  chip8State {
-    soundTimer = registerXValue,
-    programCounter = originalProgramCounter + programCounterIncrement
-  }
-  where 
-    originalVRegisters = vRegisters chip8State
-    originalProgramCounter = programCounter chip8State
-    opcode = currentOpcode chip8State 
-    registerXValue = getRegisterXValue opcode originalVRegisters
-
+setSoundTimerToRegister :: Chip8 () 
+setSoundTimerToRegister = do
+  chip8State <- get
+  let registerXValue = getRegisterXValue (chip8State^.currentOpcode) (chip8State^.vRegisters)
+  modify (\givenState -> givenState & soundTimer .~ registerXValue)
+  incrementProgramCounter

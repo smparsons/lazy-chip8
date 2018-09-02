@@ -17,21 +17,21 @@ programCounterIncrement = 0x0002
 chip8NumberOfColumns :: Int
 chip8NumberOfColumns = 64
 
-chip8InitialState :: Chip8
-chip8InitialState = Chip8 {
-  currentOpcode = 0x0000,
-  memory = V.replicate 4096 0x00,
-  vRegisters = V.replicate 16 0x00,
-  indexRegister = 0x0000,
-  programCounter = 0x200,
-  graphics = V.replicate 2048 0x00,
-  delayTimer = 0x00,
-  soundTimer = 0x00,
-  stack = V.replicate 16 0x00,
-  stackPointer = 0x0000,
-  keyState = V.replicate 16 0x00,
-  drawFlag = False,
-  randomNumberSeed = mkStdGen 0
+chip8InitialState :: Chip8State
+chip8InitialState = Chip8State {
+  _currentOpcode = 0x0000,
+  _memory = V.replicate 4096 0x00,
+  _vRegisters = V.replicate 16 0x00,
+  _indexRegister = 0x0000,
+  _programCounter = 0x200,
+  _graphics = V.replicate 2048 0x00,
+  _delayTimer = 0x00,
+  _soundTimer = 0x00,
+  _stack = V.replicate 16 0x00,
+  _stackPointer = 0x0000,
+  _keyState = V.replicate 16 0x00,
+  _drawFlag = False,
+  _randomNumberSeed = mkStdGen 0
 }
 
 chip8Fontset :: [Word8] 

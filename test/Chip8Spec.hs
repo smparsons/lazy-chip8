@@ -7,18 +7,19 @@ import Chip8
 import Types
 import Constants
 
-import Data.Word
 import qualified Data.Vector as V
+import Control.Monad.State
+import Control.Lens
 
 spec :: Spec
 spec = do
-  describe "loadFontset" $ do
+  describe "loadFontsetIntoMemory" $ do
     it "correctly loads fontset into memory at address 0x0" $ do
-      let initialMemory = memory chip8InitialState
-      let updatedMemory = loadFontset initialMemory
+      let resultingState = execState loadFontsetIntoMemory chip8InitialState
+      let resultingMemory = resultingState^.memory
 
       let numberOfBytesToSlice = 0x50
-      let fontset = V.toList $ V.slice 0 numberOfBytesToSlice updatedMemory 
+      let fontset = V.toList $ V.slice 0 numberOfBytesToSlice resultingMemory 
       fontset `shouldMatchList` chip8Fontset
 
   describe "loadGameIntoMemory" $ do
@@ -30,9 +31,9 @@ spec = do
             , 0x12, 0x18, 0x80, 0x40, 0x20, 0x10, 0x20, 0x40
             , 0x80, 0x10 ]
 
-      let initialMemory = memory chip8InitialState
-      let updatedMemory = loadGameIntoMemory initialMemory mazeGame
+      let resultingState = execState (loadGameIntoMemory mazeGame) chip8InitialState
+      let resultingMemory = resultingState^.memory
 
       let numberOfBytesToSlice = 0x22
-      let loadedGame = V.toList $ V.slice 0x200 numberOfBytesToSlice updatedMemory
+      let loadedGame = V.toList $ V.slice 0x200 numberOfBytesToSlice resultingMemory
       loadedGame `shouldMatchList` mazeGame 

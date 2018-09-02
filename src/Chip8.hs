@@ -1,48 +1,41 @@
 module Chip8 
 ( emulateCpuCycle,
   initializeChip8,
-  loadFontset,
-  loadGameByFilePath,
+  loadFontsetIntoMemory,
   loadGameIntoMemory
 ) where
 
 import System.Random
 import Data.Word
-import Data.ByteString as BS
 import qualified Data.Vector as V
+import Control.Monad.State
+import Control.Lens
 
 import Constants
 import Cpu
 import Types
 
-emulateCpuCycle :: Chip8 -> Chip8
-emulateCpuCycle = decrementSoundTimer . decrementDelayTimer . executeOpcode
+initializeChip8 :: StdGen -> Chip8 ()
+initializeChip8 newSeed = do 
+  modify (\givenState -> givenState & randomNumberSeed .~ newSeed)  
+  loadFontsetIntoMemory
 
-initializeChip8 :: IO Chip8
-initializeChip8 = do 
-  newSeed <- newStdGen  
-  let emptyMemory = memory chip8InitialState
-  let updatedMemory = loadFontset emptyMemory
-  return chip8InitialState { memory = updatedMemory, randomNumberSeed = newSeed }
+loadFontsetIntoMemory :: Chip8 ()
+loadFontsetIntoMemory = do
+  let fontsetVector = V.fromList chip8Fontset
+      fontsetAddresses = V.imap (\currentIndex fontsetByte -> (currentIndex, fontsetByte)) fontsetVector
+      loadFontset = flip V.update fontsetAddresses
+  modify (\givenState -> givenState & memory %~ loadFontset)
 
-loadFontset :: V.Vector Word8 -> V.Vector Word8
-loadFontset givenMemory = V.update givenMemory fontsetAddresses
-  where
-    fontsetVector = V.fromList chip8Fontset
-    fontsetAddresses = V.imap (\currentIndex fontsetByte -> (currentIndex, fontsetByte)) fontsetVector
+loadGameIntoMemory :: [Word8] -> Chip8 ()
+loadGameIntoMemory game = do
+  let gameVector = V.fromList $ game
+      gameAddresses = V.imap (\currentIndex gameByte -> (currentIndex + 0x200, gameByte)) gameVector 
+      loadGame = flip V.update gameAddresses
+  modify (\givenState -> givenState & memory %~ loadGame)
 
-loadGameByFilePath :: String -> Chip8 -> IO Chip8
-loadGameByFilePath filePath chip8State = do
-  contents <- BS.readFile filePath
-  let game = unpack contents
-  let initialMemory = memory chip8State
-  let updatedMemory = loadGameIntoMemory initialMemory game
-  return chip8State { memory = updatedMemory }
-
-loadGameIntoMemory :: V.Vector Word8 -> [Word8] -> V.Vector Word8
-loadGameIntoMemory givenMemory game = V.update givenMemory gameAddresses
-  where 
-    gameVector = V.fromList game
-    gameAddresses = V.imap (\currentIndex gameByte -> (currentIndex + 0x200, gameByte)) gameVector
-
-
+emulateCpuCycle :: Chip8 ()
+emulateCpuCycle = do
+  executeOpcode
+  decrementDelayTimer
+  decrementSoundTimer
