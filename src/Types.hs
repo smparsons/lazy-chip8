@@ -2,6 +2,7 @@
 
 module Types
 ( Chip8,
+  KeyPressState(..),
   Chip8State(..),
   currentOpcode,
   memory,
@@ -24,6 +25,11 @@ import qualified Data.Vector as V
 import Control.Monad.State
 import Control.Lens
 
+data KeyPressState 
+  = Pressed 
+  | Unpressed
+  deriving (Eq, Show)
+
 data Chip8State = Chip8State {
   _currentOpcode :: Word16,
   _memory :: V.Vector Word8,
@@ -35,7 +41,7 @@ data Chip8State = Chip8State {
   _soundTimer :: Word8,
   _stack :: V.Vector Word16,
   _stackPointer :: Word16,
-  _keyState :: V.Vector Word8,
+  _keyState :: V.Vector KeyPressState,
   _drawFlag :: Bool,
   _randomNumberSeed :: StdGen
 } deriving (Show)

@@ -21,7 +21,7 @@ spec = do
       let initialState = chip8InitialState {
         _currentOpcode = 0xEA9E,
         _vRegisters = V.update originalVRegisters $ V.fromList [(0xA, 0xC)],
-        _keyState = V.update originalKeyState $ V.fromList [(0xC, 0x1)],
+        _keyState = V.update originalKeyState $ V.fromList [(0xC, Pressed)],
         _programCounter = 0x200
       }
   
@@ -35,7 +35,7 @@ spec = do
       let initialState = chip8InitialState {
         _currentOpcode = 0xE59E,
         _vRegisters = V.update originalVRegisters $ V.fromList [(0x5, 0xA)],
-        _keyState = V.update originalKeyState $ V.fromList [(0xA, 0x0)],
+        _keyState = V.update originalKeyState $ V.fromList [(0xA, Unpressed)],
         _programCounter = 0x250
       }
 
@@ -53,7 +53,7 @@ spec = do
       let initialState = chip8InitialState {
         _currentOpcode = 0xE7A1,
         _vRegisters = V.update originalVRegisters $ V.fromList [(0x7, 0x1)],
-        _keyState = V.update originalKeyState $ V.fromList [(0x1, 0x0)],
+        _keyState = V.update originalKeyState $ V.fromList [(0x1, Unpressed)],
         _programCounter = 0x220
       }
   
@@ -67,7 +67,7 @@ spec = do
       let initialState = chip8InitialState {
         _currentOpcode = 0xE2A1,
         _vRegisters = V.update originalVRegisters $ V.fromList [(0x2, 0xD)],
-        _keyState = V.update originalKeyState $ V.fromList [(0xD, 0x1)],
+        _keyState = V.update originalKeyState $ V.fromList [(0xD, Pressed)],
         _programCounter = 0x27A
       }
 
@@ -103,7 +103,7 @@ spec = do
       let initialState = chip8InitialState {
         _currentOpcode = 0xF90A,
         _vRegisters = V.update originalVRegisters $ V.fromList [(0x9, 0x7C)],
-        _keyState = V.update originalKeyState $ V.fromList [(0x3, 0x1)],
+        _keyState = V.update originalKeyState $ V.fromList [(0x3, Pressed)],
         _programCounter = 0x312
       }
 
