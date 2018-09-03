@@ -47,7 +47,8 @@ executable lazy-chip8
     linear,
     bytestring,
     mtl,
-    random
+    random,
+    lens
 
 test-suite hspec
     build-depends: base, 
