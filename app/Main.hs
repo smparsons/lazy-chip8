@@ -7,6 +7,7 @@ import Control.Monad (unless)
 import qualified Data.ByteString as BS
 import Control.Monad.State
 import Control.Lens
+import Control.Concurrent
 import System.Random
 import Foreign.C.Types
 
@@ -51,10 +52,13 @@ loadGameByFilePath filepath chip8State = do
 
 emulatorLoop :: Chip8State -> Renderer -> Texture -> IO ()
 emulatorLoop chip8State renderer texture = do
+  let updatedChip8State = execState emulateCpuCycle chip8State
+  updatedTexture <- drawGraphicsIfApplicable updatedChip8State renderer texture
+  threadDelay 1200
+
   events <- pollEvents
   let userHasQuit = any isQuitEvent events
-      updatedChip8State = execState emulateCpuCycle chip8State
-  updatedTexture <- drawGraphicsIfApplicable updatedChip8State renderer texture
+
   unless userHasQuit (emulatorLoop updatedChip8State renderer updatedTexture)
 
 isQuitEvent :: Event -> Bool
