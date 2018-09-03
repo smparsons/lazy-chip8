@@ -6,12 +6,13 @@ import SDL
 import Control.Monad (unless)
 import qualified Data.ByteString as BS
 import Control.Monad.State
+import Control.Lens
 import System.Random
-import Data.Word
 import Foreign.C.Types
 
 import Constants
 import Chip8
+import Types
 
 main :: IO ()
 main = do
@@ -23,43 +24,50 @@ main = do
 
 startEmulator :: String -> IO ()
 startEmulator filepath = do
-  newSeed <- newStdGen
-  let chip8State = execState (initializeChip8 newSeed) chip8InitialState
-  contents <- BS.readFile filepath
-  let game = BS.unpack contents
-  let chip8State' = execState (loadGameIntoMemory game) chip8State
+  chip8State <- initializeChip8State
+  chip8State' <- loadGameByFilePath filepath chip8State
 
   initializeAll
   window <- createWindow "Chip-8 Emulator" defaultWindow { windowInitialSize = V2 640 320 }
   renderer <- createRenderer window (-1) defaultRenderer
   texture <- createTexture renderer RGBA8888 TextureAccessStatic (V2 64 32)  
   
-  emulatorLoop renderer texture
+  emulatorLoop chip8State' renderer texture
 
   destroyTexture texture
   destroyRenderer renderer
   destroyWindow window
 
-emulatorLoop :: Renderer -> Texture -> IO ()
-emulatorLoop renderer texture = do
+initializeChip8State :: IO Chip8State
+initializeChip8State = do
+  newSeed <- newStdGen
+  return $ execState (initializeChip8 newSeed) chip8InitialState
+
+loadGameByFilePath :: String -> Chip8State -> IO Chip8State
+loadGameByFilePath filepath chip8State = do
+  contents <- BS.readFile filepath
+  let game = BS.unpack contents
+  return $ execState (loadGameIntoMemory game) chip8State
+
+emulatorLoop :: Chip8State -> Renderer -> Texture -> IO ()
+emulatorLoop chip8State renderer texture = do
   events <- pollEvents
   let userHasQuit = any isQuitEvent events
-  drawGraphics renderer texture
-  unless userHasQuit (emulatorLoop renderer texture)
+      updatedChip8State = execState emulateCpuCycle chip8State
+  updatedTexture <- drawGraphicsIfApplicable updatedChip8State renderer texture
+  unless userHasQuit (emulatorLoop updatedChip8State renderer updatedTexture)
 
 isQuitEvent :: Event -> Bool
 isQuitEvent event = eventPayload event == QuitEvent
 
-drawGraphics :: Renderer -> Texture -> IO ()
-drawGraphics renderer texture = do
-  let black = [0, 0, 0, 0] :: [Word8]
-      white = [255, 255, 255, 255] :: [Word8]
-      pixelArray = (flatten [black,white,black,white]) ++ (take 8160 (cycle black)) ++ (flatten [black,white,black,white])
-      pixels = BS.pack pixelArray
+drawGraphicsIfApplicable :: Chip8State -> Renderer -> Texture -> IO Texture
+drawGraphicsIfApplicable chip8State renderer texture =
+  if (chip8State^.drawFlag) then drawGraphics chip8State renderer texture else return texture
 
+drawGraphics :: Chip8State -> Renderer -> Texture -> IO Texture
+drawGraphics chip8State renderer texture = do
+  let pixels = evalState getGraphicsAsByteString chip8State
   updatedTexture <- updateTexture texture Nothing pixels (256 :: CInt)
   copy renderer updatedTexture Nothing Nothing
   present renderer
-
-flatten :: [[a]] -> [a]         
-flatten xs = (\z n -> foldr (\x y -> foldr z y x) n xs) (:) []
+  return updatedTexture
