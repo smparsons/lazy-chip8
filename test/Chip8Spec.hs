@@ -10,6 +10,7 @@ import Constants
 import qualified Data.Vector as V
 import Control.Monad.State
 import Control.Lens
+import qualified Data.ByteString as BS
 
 spec :: Spec
 spec = do
@@ -37,3 +38,23 @@ spec = do
       let numberOfBytesToSlice = 0x22
       let loadedGame = V.toList $ V.slice 0x200 numberOfBytesToSlice resultingMemory
       loadedGame `shouldMatchList` mazeGame 
+
+  describe "getGraphicsAsByteString" $ do
+    it "packs the pixel array into a bytestring" $ do
+      let chip8State = chip8InitialState {
+        _graphics = V.update (chip8InitialState^.graphics) $ V.fromList 
+          [ (0x1, 1)
+          , (0x3, 1)
+          , (0x7FC, 1)
+          , (0x7FE, 1) ]}
+          bsResult = evalState getGraphicsAsByteString chip8State
+          byteList = BS.unpack bsResult
+          slice start end = take (end - start + 1) . drop start
+          beginningByteSlice = slice 0 0xF byteList
+          endingByteSlice = slice 0x1FF0 0x2000 byteList
+
+      beginningByteSlice `shouldMatchList` 
+        [0x0, 0x0, 0x0, 0x0, 0xFF, 0xFF, 0xFF, 0xFF, 0x0, 0x0, 0x0, 0x0, 0xFF, 0xFF, 0xFF, 0xFF]
+
+      endingByteSlice `shouldMatchList`
+        [0xFF, 0xFF, 0xFF, 0xFF, 0x0, 0x0, 0x0, 0x0, 0xFF, 0xFF, 0xFF, 0xFF, 0x0, 0x0, 0x0, 0x0]

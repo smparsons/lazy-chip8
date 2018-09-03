@@ -2,7 +2,8 @@ module Chip8
 ( emulateCpuCycle,
   initializeChip8,
   loadFontsetIntoMemory,
-  loadGameIntoMemory
+  loadGameIntoMemory,
+  getGraphicsAsByteString
 ) where
 
 import System.Random
@@ -10,6 +11,7 @@ import Data.Word
 import qualified Data.Vector as V
 import Control.Monad.State
 import Control.Lens
+import qualified Data.ByteString as BS
 
 import Constants
 import Cpu
@@ -39,3 +41,13 @@ emulateCpuCycle = do
   executeOpcode
   decrementDelayTimer
   decrementSoundTimer
+
+getGraphicsAsByteString :: Chip8 BS.ByteString
+getGraphicsAsByteString = do
+  chip8Graphics <- gets (\givenState -> V.toList $ givenState^.graphics)
+  let black = [0, 0, 0, 0] :: [Word8]
+      white = [255, 255, 255, 255] :: [Word8]
+      flatten xs = (\z n -> foldr (\x y -> foldr z y x) n xs) (:) []
+      rgbaFormatGraphics = flatten $ map (\pixelState -> if pixelState == 1 then white else black) chip8Graphics
+      graphicsByteString = BS.pack rgbaFormatGraphics
+  return graphicsByteString
