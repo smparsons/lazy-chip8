@@ -3,7 +3,8 @@ module Chip8
   initializeChip8,
   loadFontsetIntoMemory,
   loadGameIntoMemory,
-  getGraphicsAsByteString
+  getGraphicsAsByteString,
+  storeKeyPressChanges
 ) where
 
 import System.Random
@@ -51,3 +52,8 @@ getGraphicsAsByteString = do
       rgbaFormatGraphics = flatten $ map (\pixelState -> if pixelState == 1 then white else black) chip8Graphics
       graphicsByteString = BS.pack rgbaFormatGraphics
   return graphicsByteString
+
+storeKeyPressChanges :: [(Int, KeyPressState)] -> Chip8 ()
+storeKeyPressChanges keyPressChanges = do
+  let loadKeyPressChanges = flip V.update $ V.fromList keyPressChanges
+  modify (\givenState -> givenState & keyState %~ loadKeyPressChanges)

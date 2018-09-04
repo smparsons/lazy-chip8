@@ -35,7 +35,7 @@ spec = do
       let initialState = chip8InitialState {
         _currentOpcode = 0xE59E,
         _vRegisters = V.update originalVRegisters $ V.fromList [(0x5, 0xA)],
-        _keyState = V.update originalKeyState $ V.fromList [(0xA, Unpressed)],
+        _keyState = V.update originalKeyState $ V.fromList [(0xA, Released)],
         _programCounter = 0x250
       }
 
@@ -53,7 +53,7 @@ spec = do
       let initialState = chip8InitialState {
         _currentOpcode = 0xE7A1,
         _vRegisters = V.update originalVRegisters $ V.fromList [(0x7, 0x1)],
-        _keyState = V.update originalKeyState $ V.fromList [(0x1, Unpressed)],
+        _keyState = V.update originalKeyState $ V.fromList [(0x1, Released)],
         _programCounter = 0x220
       }
   

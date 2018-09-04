@@ -58,3 +58,29 @@ spec = do
 
       endingByteSlice `shouldMatchList`
         [0xFF, 0xFF, 0xFF, 0xFF, 0x0, 0x0, 0x0, 0x0, 0xFF, 0xFF, 0xFF, 0xFF, 0x0, 0x0, 0x0, 0x0]
+
+  describe "storeKeyPressChanges" $ do
+    it "stores key press changes" $ do
+      let chip8State = chip8InitialState {
+        _keyState = V.update (chip8InitialState^.keyState) $ V.fromList [(0x3, Pressed),(0x7, Pressed)]
+      }
+          keyPressChanges = [(0x0, Pressed), (0x3, Released), (0xC, Pressed), (0xF, Pressed)]
+          resultingState = execState (storeKeyPressChanges keyPressChanges) chip8State
+
+      (V.toList $ resultingState^.keyState) `shouldMatchList` 
+        [ Pressed
+        , Released
+        , Released
+        , Released
+        , Released
+        , Released
+        , Released
+        , Pressed
+        , Released
+        , Released
+        , Released
+        , Released
+        , Pressed
+        , Released
+        , Released
+        , Pressed ]

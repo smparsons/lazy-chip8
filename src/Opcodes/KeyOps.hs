@@ -36,7 +36,7 @@ keyIsNotPressed = do
   registerXValue <- getRegisterXValue
   let key = fromIntegral registerXValue :: Int
       keyValue = (chip8State^.keyState) V.! key
-  if keyValue == Unpressed then skipNextInstruction else incrementProgramCounter
+  if keyValue == Released then skipNextInstruction else incrementProgramCounter
 
 {-
   0xFX0A

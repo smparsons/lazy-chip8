@@ -27,7 +27,7 @@ import Control.Lens
 
 data KeyPressState 
   = Pressed 
-  | Unpressed
+  | Released
   deriving (Eq, Show)
 
 data Chip8State = Chip8State {
