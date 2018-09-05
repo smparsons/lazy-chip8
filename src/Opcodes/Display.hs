@@ -44,7 +44,9 @@ drawGraphics = do
         map
           (\(colOffset,rowOffset) -> 
             let convertedIndexRegisterValue = (fromIntegral $ chip8State^.indexRegister) :: Int
-                currentIndex = coordinateX' + colOffset + ((coordinateY' + rowOffset) * chip8NumberOfColumns)
+                xIndex = (coordinateX' + colOffset) `mod` chip8NumberOfColumns
+                yIndex = (coordinateY' + rowOffset) `mod` chip8NumberOfRows
+                currentIndex = xIndex + (yIndex * chip8NumberOfColumns)
                 graphicsPixel = (chip8State^.graphics) V.! currentIndex
                 memoryValue = (chip8State^.memory) V.! (convertedIndexRegisterValue + rowOffset)
                 memoryPixel = 

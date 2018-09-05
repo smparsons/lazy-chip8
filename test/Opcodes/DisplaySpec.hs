@@ -126,3 +126,52 @@ spec = do
       it "increments the program counter" $ do
         let updatedProgramCounter = resultingState^.programCounter
         updatedProgramCounter `shouldBe` 0x3CC
+
+    context "when drawing on screen past the screen boundary" $ do 
+      let originalGraphics = chip8InitialState^.graphics
+
+      let initialState = chip8InitialState {
+        _currentOpcode = 0xDB53,
+        _indexRegister = 0x31B,
+        _memory = V.update originalMemory $ V.fromList
+          [ (0x31B, 0x25)
+          , (0x31C, 0xA3)
+          , (0x31D, 0x7C) ], 
+        _graphics = V.update originalGraphics $ V.fromList 
+          [ (0x28 + (0x1E * 64), 1)
+          , (0x2A + (0x1E * 64), 1)
+          , (0x2C + (0x1E * 64), 1)
+          , (0x29 + (0x1F * 64), 1)
+          , (0x2B + (0x1F * 64), 1)
+          , (0x28, 1)
+          , (0x2A, 1) ],
+        _vRegisters = V.update originalVRegisters $ V.fromList [(0xB,0x28),(0x5,0x1E),(0xF,0x0)],
+        _programCounter = 0x29B
+      }
+      let resultingState = execState drawGraphics initialState
+      let resultingVRegisters = resultingState^.vRegisters
+
+      it "correctly updates pixel state using the xor operation, and wraps to the other side of the screen" $ do 
+        let updatedGraphics = resultingState^.graphics
+        let numberOfBytesToSlice = 8
+
+        let firstRowGraphicSlice = V.toList $ V.slice (0x28 + (0x1E * 64)) numberOfBytesToSlice updatedGraphics 
+        firstRowGraphicSlice `shouldMatchList` [1,0,0,0,1,1,0,1]
+
+        let secondRowGraphicSlice = V.toList $ V.slice (0x28 + (0x1F * 64)) numberOfBytesToSlice updatedGraphics
+        secondRowGraphicSlice `shouldMatchList` [1,1,1,1,0,0,1,1]
+
+        let thirdRowGraphicSlice = V.toList $ V.slice 0x28 numberOfBytesToSlice updatedGraphics
+        thirdRowGraphicSlice `shouldMatchList` [1,1,0,1,1,1,0,0]
+
+      it "sets carry register to 1" $ do
+        let carry = resultingVRegisters V.! 0xF
+        carry `shouldBe` 0x1
+
+      it "sets draw flag to true" $ do
+        let updatedDrawFlag = resultingState^.drawFlag
+        updatedDrawFlag `shouldBe` True 
+        
+      it "increments the program counter" $ do
+        let updatedProgramCounter = resultingState^.programCounter
+        updatedProgramCounter `shouldBe` 0x29D
