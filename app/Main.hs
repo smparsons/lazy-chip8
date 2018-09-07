@@ -1,20 +1,25 @@
 {-# LANGUAGE OverloadedStrings #-}
 module Main where
 
-import System.Environment
-import SDL
 import Control.Monad (unless)
-import qualified Data.ByteString as BS
 import Control.Monad.State
 import Control.Concurrent
+import Control.Lens
+import qualified Data.ByteString as BS
+import Data.Maybe
+import Foreign.C.Types
+import qualified SDL
+import System.Environment
 import System.Random
 
 import Constants
 import Chip8
-import Emulator.Events
-import Emulator.Graphics
-import Emulator.Helpers
-import Emulator.Types
+import Types
+
+type Emulator a = StateT Chip8State IO a
+
+hoist :: Monad m => State s a -> StateT s m a
+hoist = StateT . (return .) . runState
 
 main :: IO ()
 main = do
@@ -29,16 +34,21 @@ startEmulator filepath = do
   initializeChip8State
   loadGameByFilePath filepath
 
-  liftIO initializeAll
-  window <- liftIO $ createWindow "Chip-8 Emulator" defaultWindow { windowInitialSize = V2 640 320 }
-  renderer <- liftIO $ createRenderer window (-1) defaultRenderer
-  texture <- liftIO $ createTexture renderer RGBA8888 TextureAccessStatic (V2 64 32)  
+  (window, renderer, texture) <- liftIO setupSDLComponents  
   
   emulatorLoop renderer texture
 
-  destroyTexture texture
-  destroyRenderer renderer
-  destroyWindow window
+  SDL.destroyTexture texture
+  SDL.destroyRenderer renderer
+  SDL.destroyWindow window
+
+setupSDLComponents :: IO (SDL.Window, SDL.Renderer, SDL.Texture)
+setupSDLComponents = do
+  SDL.initializeAll
+  window <- SDL.createWindow "Chip-8 Emulator" SDL.defaultWindow { SDL.windowInitialSize = SDL.V2 640 320 }
+  renderer <- SDL.createRenderer window (-1) SDL.defaultRenderer
+  texture <- SDL.createTexture renderer SDL.RGBA8888 SDL.TextureAccessStatic (SDL.V2 64 32) 
+  return (window, renderer, texture) 
 
 initializeChip8State :: Emulator ()
 initializeChip8State = do
@@ -51,15 +61,72 @@ loadGameByFilePath filepath = do
   let game = BS.unpack contents
   hoist $ loadGameIntoMemory game
 
-emulatorLoop :: Renderer -> Texture -> Emulator ()
+emulatorLoop :: SDL.Renderer -> SDL.Texture -> Emulator ()
 emulatorLoop renderer texture = do
   hoist emulateCpuCycle
-  updatedTexture <- drawGraphicsIfApplicable renderer texture
+  updatedTexture <- drawGraphicsIfNecessary renderer texture
 
-  events <- liftIO pollEvents
+  events <- liftIO SDL.pollEvents
   let userHasQuit = any isQuitEvent events
       keyPressChanges = getKeyPressChanges events
 
   hoist $ storeKeyPressChanges keyPressChanges
   liftIO $ threadDelay 1200
   unless userHasQuit (emulatorLoop renderer updatedTexture)
+
+getKeyPressChanges :: [SDL.Event] -> [(Int, KeyPressState)]
+getKeyPressChanges = catMaybes . map getMappedKeyPressAndMotion 
+
+getMappedKeyPressAndMotion :: SDL.Event -> Maybe (Int, KeyPressState)
+getMappedKeyPressAndMotion event = 
+  case SDL.eventPayload event of
+    SDL.KeyboardEvent keyboardEvent ->
+      case mapKeyPress keyboardEvent of         
+        Just mappedKeyPress -> 
+          let keyPressMotion = mapKeyPressMotion keyboardEvent in 
+          Just (mappedKeyPress, keyPressMotion)
+        Nothing -> Nothing
+    _ -> Nothing
+
+mapKeyPress :: SDL.KeyboardEventData -> Maybe Int
+mapKeyPress keyboardEvent =
+  case SDL.keysymKeycode (SDL.keyboardEventKeysym keyboardEvent) of
+    SDL.Keycode1 -> Just 0x1
+    SDL.Keycode2 -> Just 0x2
+    SDL.Keycode3 -> Just 0x3
+    SDL.Keycode4 -> Just 0xC
+    SDL.KeycodeQ -> Just 0x4
+    SDL.KeycodeW -> Just 0x5
+    SDL.KeycodeE -> Just 0x6
+    SDL.KeycodeR -> Just 0xD
+    SDL.KeycodeA -> Just 0x7
+    SDL.KeycodeS -> Just 0x8
+    SDL.KeycodeD -> Just 0x9
+    SDL.KeycodeF -> Just 0xE
+    SDL.KeycodeZ -> Just 0xA
+    SDL.KeycodeX -> Just 0x0
+    SDL.KeycodeC -> Just 0xB
+    SDL.KeycodeV -> Just 0xF 
+    _ -> Nothing 
+
+mapKeyPressMotion :: SDL.KeyboardEventData -> KeyPressState
+mapKeyPressMotion keyboardEvent =
+  case SDL.keyboardEventKeyMotion keyboardEvent of
+    SDL.Pressed -> Pressed
+    SDL.Released -> Released
+
+isQuitEvent :: SDL.Event -> Bool
+isQuitEvent event = SDL.eventPayload event == SDL.QuitEvent
+
+drawGraphicsIfNecessary :: SDL.Renderer -> SDL.Texture -> Emulator SDL.Texture
+drawGraphicsIfNecessary renderer texture = do
+  canDrawGraphics <- gets (\givenState -> givenState^.drawFlag)
+  if canDrawGraphics 
+    then do 
+      pixels <- hoist getGraphicsAsByteString
+      updatedTexture <- liftIO $ SDL.updateTexture texture Nothing pixels (256 :: CInt)
+      liftIO $ SDL.copy renderer updatedTexture Nothing Nothing
+      liftIO $ SDL.present renderer
+      modify (\givenState -> givenState & drawFlag .~ False)
+      return updatedTexture
+    else return texture
