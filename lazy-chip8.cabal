@@ -1,12 +1,11 @@
 name:                lazy-chip8
 version:             0.1.0.0
-homepage:            https://github.com/githubuser/lazy-chip8#readme
+homepage:            https://github.com/smparsons/lazy-chip8#readme
 license:             BSD3
 license-file:        LICENSE
-author:              Author name here
-maintainer:          example@example.com
-copyright:           2018 Author name here
-category:            Web
+author:              Samuel Parsons
+maintainer:          samuel.m.parsons@gmail.com
+copyright:           2018 Samuel Parsons
 build-type:          Simple
 cabal-version:       >=1.10
 extra-source-files:  README.md
