@@ -33,14 +33,9 @@ startEmulator :: String -> Emulator ()
 startEmulator filepath = do
   initializeChip8State
   loadGameByFilePath filepath
-
-  (window, renderer, texture) <- liftIO setupSDLComponents  
-  
+  (window, renderer, texture) <- liftIO setupSDLComponents    
   emulatorLoop renderer texture
-
-  SDL.destroyTexture texture
-  SDL.destroyRenderer renderer
-  SDL.destroyWindow window
+  liftIO $ destroySDLComponents window renderer texture
 
 setupSDLComponents :: IO (SDL.Window, SDL.Renderer, SDL.Texture)
 setupSDLComponents = do
@@ -49,6 +44,12 @@ setupSDLComponents = do
   renderer <- SDL.createRenderer window (-1) SDL.defaultRenderer
   texture <- SDL.createTexture renderer SDL.RGBA8888 SDL.TextureAccessStatic (SDL.V2 64 32) 
   return (window, renderer, texture) 
+
+destroySDLComponents :: SDL.Window -> SDL.Renderer -> SDL.Texture -> IO ()
+destroySDLComponents window renderer texture = do
+  SDL.destroyTexture texture
+  SDL.destroyRenderer renderer
+  SDL.destroyWindow window
 
 initializeChip8State :: Emulator ()
 initializeChip8State = do
@@ -66,7 +67,7 @@ emulatorLoop renderer texture = do
   hoist emulateCpuCycle
   updatedTexture <- drawGraphicsIfNecessary renderer texture
 
-  events <- liftIO SDL.pollEvents
+  events <- liftIO SDL.pollEvents  
   let userHasQuit = any isQuitEvent events
       keyPressChanges = getKeyPressChanges events
 
