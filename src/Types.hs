@@ -16,6 +16,7 @@ module Types
   stackPointer,
   keyState,
   drawFlag,
+  audioFlag,
   randomNumberSeed
 ) where
 
@@ -43,6 +44,7 @@ data Chip8State = Chip8State {
   _stackPointer :: Word16,
   _keyState :: V.Vector KeyPressState,
   _drawFlag :: Bool,
+  _audioFlag :: Bool,
   _randomNumberSeed :: StdGen
 } deriving (Show)
 

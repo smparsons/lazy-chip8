@@ -1,14 +1,16 @@
 {-# LANGUAGE OverloadedStrings #-}
+
 module Main where
 
 import Control.Monad (unless)
 import Control.Monad.State
 import Control.Concurrent
-import Control.Lens
+import Control.Lens hiding (Context)
 import qualified Data.ByteString as BS
 import Data.Maybe
 import Foreign.C.Types
 import qualified SDL
+import Sound.ALUT
 import System.Environment
 import System.Random
 
@@ -33,8 +35,17 @@ startEmulator :: String -> Emulator ()
 startEmulator filepath = do
   initializeChip8State
   loadGameByFilePath filepath
-  (window, renderer, texture) <- liftIO setupSDLComponents    
-  emulatorLoop renderer texture
+  (window, renderer, texture) <- liftIO setupSDLComponents 
+
+  (Just device) <- openDevice Nothing
+  (Just context) <- createContext device []
+
+  withProgNameAndArgs runALUTUsingCurrentContext $ \_ _ -> do
+    currentContext $= Just context
+    audioSource <- liftIO createBeepSource
+    emulatorLoop renderer texture audioSource
+
+  _ <- closeDevice device
   liftIO $ destroySDLComponents window renderer texture
 
 setupSDLComponents :: IO (SDL.Window, SDL.Renderer, SDL.Texture)
@@ -62,18 +73,19 @@ loadGameByFilePath filepath = do
   let game = BS.unpack contents
   hoist $ loadGameIntoMemory game
 
-emulatorLoop :: SDL.Renderer -> SDL.Texture -> Emulator ()
-emulatorLoop renderer texture = do
+emulatorLoop :: SDL.Renderer -> SDL.Texture -> Source -> Emulator ()
+emulatorLoop renderer texture audioSource = do
   hoist emulateCpuCycle
   updatedTexture <- drawGraphicsIfNecessary renderer texture
+  playBeepIfNecessary audioSource
 
   events <- liftIO SDL.pollEvents  
   let userHasQuit = any isQuitEvent events
       keyPressChanges = getKeyPressChanges events
 
   hoist $ storeKeyPressChanges keyPressChanges
-  liftIO $ threadDelay 1200
-  unless userHasQuit (emulatorLoop renderer updatedTexture)
+  liftIO $ threadDelay 1500
+  unless userHasQuit (emulatorLoop renderer updatedTexture audioSource)
 
 getKeyPressChanges :: [SDL.Event] -> [(Int, KeyPressState)]
 getKeyPressChanges = catMaybes . map getMappedKeyPressAndMotion 
@@ -131,3 +143,19 @@ drawGraphicsIfNecessary renderer texture = do
       modify (\givenState -> givenState & drawFlag .~ False)
       return updatedTexture
     else return texture
+
+createBeepSource :: IO Source
+createBeepSource = do
+  beep <- createBuffer $ Sine 340 0 0.075
+  [source] <- genObjectNames 1
+  queueBuffers source [beep]
+  return source
+
+playBeepIfNecessary :: Source -> Emulator ()
+playBeepIfNecessary beep = do
+  shouldPlayBeep <- gets (\givenState -> givenState^.audioFlag)
+  if shouldPlayBeep 
+    then do
+      liftIO $ play [beep]
+      modify (\givenState -> givenState & audioFlag .~ False)
+    else return ()

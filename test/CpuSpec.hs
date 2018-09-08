@@ -48,12 +48,27 @@ spec = do
       let initialState = chip8InitialState { _soundTimer = 0x21 }
       let resultingState = execState decrementSoundTimer initialState
       let resultingSoundTimer = resultingState^.soundTimer
+      let resultingAudioFlag = resultingState^.audioFlag
+
+      resultingAudioFlag `shouldBe` False
       resultingSoundTimer `shouldBe` 0x20
+
+    it "sets audio flag to true when decrementing from one to zero" $ do
+      let initialState = chip8InitialState { _soundTimer = 0x1 }
+      let resultingState = execState decrementSoundTimer initialState
+      let resultingSoundTimer = resultingState^.soundTimer
+      let resultingAudioFlag = resultingState^.audioFlag
+
+      resultingAudioFlag `shouldBe` True
+      resultingSoundTimer `shouldBe` 0x0
 
     it "does not decrement sound timer when it is already at zero" $ do
       let initialState = chip8InitialState { _soundTimer = 0x0 }
       let resultingState = execState decrementSoundTimer initialState
       let resultingSoundTimer = resultingState^.soundTimer
+      let resultingAudioFlag = resultingState^.audioFlag
+
+      resultingAudioFlag `shouldBe` False
       resultingSoundTimer `shouldBe` 0x0
 
   describe "decrementDelayTimer" $ do

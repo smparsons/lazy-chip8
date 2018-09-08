@@ -94,5 +94,7 @@ decrementSoundTimer :: Chip8 ()
 decrementSoundTimer = do
   chip8State <- get
   let originalSoundTimer = chip8State^.soundTimer
+      shouldPlaySound = originalSoundTimer == 1
       newSoundTimer = if originalSoundTimer > 0 then originalSoundTimer - 1 else originalSoundTimer
+  modify (\givenState -> givenState & audioFlag .~ shouldPlaySound)
   modify (\givenState -> givenState & soundTimer .~ newSoundTimer)

@@ -35,6 +35,7 @@ chip8InitialState = Chip8State {
   _stackPointer = 0x0000,
   _keyState = V.replicate 16 Released,
   _drawFlag = False,
+  _audioFlag = False,
   _randomNumberSeed = mkStdGen 0
 }
 

@@ -47,7 +47,9 @@ executable lazy-chip8
     bytestring,
     mtl,
     random,
-    lens
+    lens,
+    OpenAL,
+    ALUT
 
 test-suite hspec
     build-depends: base, 
