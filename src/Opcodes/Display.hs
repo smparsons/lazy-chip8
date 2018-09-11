@@ -33,19 +33,16 @@ clearScreen = do
 drawGraphics :: Chip8 ()
 drawGraphics = do
   chip8State <- get
-  coordinateX <- getRegisterXValue
-  coordinateY <- getRegisterYValue
-  spriteHeight <- parseOneDigitConstant
-  let coordinateX' = fromIntegral coordinateX :: Int
-      coordinateY' = fromIntegral coordinateY :: Int
-      spriteHeight' = fromIntegral spriteHeight :: Int
-      spriteWidth = 8
+  coordinateX <- fmap fromIntegral getRegisterXValue
+  coordinateY <- fmap fromIntegral getRegisterYValue
+  spriteHeight <- fmap fromIntegral parseOneDigitConstant
+  let spriteWidth = 8
       pixelChangesAndCollisions = 
         map
           (\(colOffset,rowOffset) -> 
             let convertedIndexRegisterValue = (fromIntegral $ chip8State^.indexRegister) :: Int
-                xIndex = (coordinateX' + colOffset) `mod` chip8NumberOfColumns
-                yIndex = (coordinateY' + rowOffset) `mod` chip8NumberOfRows
+                xIndex = (coordinateX + colOffset) `mod` chip8NumberOfColumns
+                yIndex = (coordinateY + rowOffset) `mod` chip8NumberOfRows
                 currentIndex = xIndex + (yIndex * chip8NumberOfColumns)
                 graphicsPixel = (chip8State^.graphics) V.! currentIndex
                 memoryValue = (chip8State^.memory) V.! (convertedIndexRegisterValue + rowOffset)
@@ -54,7 +51,7 @@ drawGraphics = do
                 result = graphicsPixel `xor` memoryPixel
                 collision = graphicsPixel == 1 && memoryPixel == 1
                 in ((currentIndex, result), collision))
-          [(colOffset,rowOffset) | colOffset <- [0..spriteWidth-1], rowOffset <- [0..spriteHeight'-1]]
+          [(colOffset,rowOffset) | colOffset <- [0..spriteWidth-1], rowOffset <- [0..spriteHeight-1]]
       pixelChanges = map (\((currentIndex, result), _) -> (currentIndex, result)) pixelChangesAndCollisions
       collisionResult = if (any (\((_, _), collision) -> collision) pixelChangesAndCollisions) then 0x1 else 0x0
       updateGraphics = flip V.update $ V.fromList pixelChanges
