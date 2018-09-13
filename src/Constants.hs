@@ -2,6 +2,7 @@ module Constants
 ( programCounterIncrement,
   chip8NumberOfColumns,
   chip8NumberOfRows,
+  chip8SpriteWidth,
   chip8InitialState,
   chip8Fontset
 ) where
@@ -20,6 +21,9 @@ chip8NumberOfColumns = 64
 
 chip8NumberOfRows :: Int
 chip8NumberOfRows = 32
+
+chip8SpriteWidth :: Int
+chip8SpriteWidth = 8
 
 chip8InitialState :: Chip8State
 chip8InitialState = Chip8State {
