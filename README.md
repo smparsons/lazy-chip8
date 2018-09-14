@@ -22,7 +22,7 @@ You can then easily run the emulator from any directory:
 $ lazy-chip8 "the/path/to/your/rom"
 ```
 
-### Running During Development
+### Running during Development
 
 While developing locally, you can build and run the executable using the following stack commands:
 ```
