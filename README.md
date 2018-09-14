@@ -10,7 +10,7 @@ You will need to have Stack setup first before you can run this project. Read <a
 
 Note that this project has been developed and tested in Linux. I have not tested this project in either the Windows or Mac operating systems. 
 
-### Installing
+### Installing and Running
 
 The following command will build the project and move the executable to the `~/.local/bin` folder:
 ```
@@ -22,7 +22,7 @@ You can then easily run the emulator from any directory:
 $ lazy-chip8 "the/path/to/your/rom"
 ```
 
-### Running 
+### Running During Development
 
 While developing locally, you can build and run the executable using the following stack commands:
 ```
@@ -30,7 +30,7 @@ $ stack build
 $ stack exec lazy-chip8 "the/path/to/your/rom"
 ```
 
-### Unit Tests
+### Running Unit Tests
 
 This project contains a test suite that tests all of the CPU opcodes and logic. You can run unit tests using the following command:
 ```
