@@ -20,9 +20,8 @@ import Types
 keyIsPressed :: Chip8 ()
 keyIsPressed = do
   chip8State <- get
-  registerXValue <- getRegisterXValue 
-  let key = fromIntegral registerXValue :: Int
-      keyValue = (chip8State^.keyState) V.! key
+  registerXValue <- fmap fromIntegral getRegisterXValue 
+  let keyValue = (chip8State^.keyState) V.! registerXValue
   if keyValue == Pressed then skipNextInstruction else incrementProgramCounter
 
 {-
@@ -33,9 +32,8 @@ keyIsPressed = do
 keyIsNotPressed :: Chip8 ()
 keyIsNotPressed = do
   chip8State <- get
-  registerXValue <- getRegisterXValue
-  let key = fromIntegral registerXValue :: Int
-      keyValue = (chip8State^.keyState) V.! key
+  registerXValue <- fmap fromIntegral getRegisterXValue
+  let keyValue = (chip8State^.keyState) V.! registerXValue
   if keyValue == Released then skipNextInstruction else incrementProgramCounter
 
 {-
