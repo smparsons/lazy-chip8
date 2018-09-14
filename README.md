@@ -4,7 +4,7 @@ This is my CHIP-8 emulator written in Haskell. Since I've become interested in e
 
 While developing this project, I used <a href="http://www.multigesture.net/articles/how-to-write-an-emulator-chip-8-interpreter/">this tutorial</a> to help me understand the basics of building a CHIP-8 emulator. I also used <a href="https://en.wikipedia.org/wiki/CHIP-8">this wikipedia page</a> which contains helpful documentation on each CHIP-8 opcode.
 
-## How to Run
+## How To Run
 
 You will need to have Stack setup first before you can run this project. Read <a href="https://docs.haskellstack.org/en/stable/README/">this documentation</a> to learn how to setup Stack.
 
