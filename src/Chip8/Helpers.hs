@@ -1,15 +1,15 @@
 module Chip8.Helpers
-( parseRegisterXNumber,
-  getRegisterXValue,
-  parseRegisterYNumber,
-  getRegisterYValue,
-  parseOneDigitConstant,
-  parseTwoDigitConstant,
-  parseThreeDigitConstant,
-  incrementProgramCounter,
-  skipNextInstruction,
-  skipNextInstructionIf
-) where
+  ( parseRegisterXNumber
+  , getRegisterXValue
+  , parseRegisterYNumber
+  , getRegisterYValue
+  , parseOneDigitConstant
+  , parseTwoDigitConstant
+  , parseThreeDigitConstant
+  , incrementProgramCounter
+  , skipNextInstruction
+  , skipNextInstructionIf
+  ) where
 
 import Data.Word
 import Data.Bits

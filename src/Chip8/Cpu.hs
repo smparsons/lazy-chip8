@@ -1,10 +1,10 @@
 module Chip8.Cpu
-( executeOpcode,
-  extractOpcodeFromMemory,
-  parseDigitsFromOpcode,
-  decrementDelayTimer,
-  decrementSoundTimer
-) where
+  ( executeOpcode
+  , extractOpcodeFromMemory
+  , parseDigitsFromOpcode
+  , decrementDelayTimer
+  , decrementSoundTimer
+  ) where
 
 import Data.Word
 import Data.Bits

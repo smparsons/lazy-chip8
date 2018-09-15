@@ -1,11 +1,11 @@
 module Chip8.Constants
-( programCounterIncrement,
-  chip8NumberOfColumns,
-  chip8NumberOfRows,
-  chip8SpriteWidth,
-  chip8InitialState,
-  chip8Fontset
-) where
+  ( programCounterIncrement
+  , chip8NumberOfColumns
+  , chip8NumberOfRows
+  , chip8SpriteWidth
+  , chip8InitialState
+  , chip8Fontset
+  ) where
 
 import System.Random
 import qualified Data.Vector as V

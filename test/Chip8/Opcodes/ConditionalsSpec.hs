@@ -1,6 +1,6 @@
 module Chip8.Opcodes.ConditionalsSpec 
-( spec
-) where
+  ( spec
+  ) where
 
 import Test.Hspec
 

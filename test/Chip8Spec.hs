@@ -1,6 +1,6 @@
 module Chip8Spec 
-( spec
-) where
+  ( spec
+  ) where
 
 import Test.Hspec
 import Chip8

@@ -1,9 +1,9 @@
 module Chip8.Opcodes.Conditionals
-( registerEqualsConstant,
-  registerDoesNotEqualConstant,
-  registersAreEqual,
-  registersAreNotEqual
-) where
+  ( registerEqualsConstant
+  , registerDoesNotEqualConstant
+  , registersAreEqual
+  , registersAreNotEqual
+  ) where
 
 import Chip8.Helpers
 import Chip8.Types

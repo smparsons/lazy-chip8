@@ -1,6 +1,6 @@
 module Chip8.Opcodes.Assignment
-( assignToRegister
-) where
+  ( assignToRegister
+  ) where
 
 import qualified Data.Vector as V
 import Control.Monad.State

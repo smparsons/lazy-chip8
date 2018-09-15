@@ -1,6 +1,6 @@
 module Chip8.Opcodes.ConstantOpsSpec 
-( spec
-) where
+  ( spec
+  ) where
 
 import Test.Hspec
 

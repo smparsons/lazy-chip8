@@ -1,8 +1,8 @@
 module Chip8.Opcodes.KeyOps
-( keyIsPressed,
-  keyIsNotPressed,
-  awaitKeyPress
-) where
+  ( keyIsPressed
+  , keyIsNotPressed
+  , awaitKeyPress
+  ) where
 
 import Data.Word
 import qualified Data.Vector as V

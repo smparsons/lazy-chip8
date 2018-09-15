@@ -1,15 +1,15 @@
 module Chip8.Opcodes 
-( module Chip8.Opcodes.Assignment,
-  module Chip8.Opcodes.BitwiseOps,
-  module Chip8.Opcodes.Conditionals,
-  module Chip8.Opcodes.ConstantOps,
-  module Chip8.Opcodes.Display,
-  module Chip8.Opcodes.Flow,
-  module Chip8.Opcodes.KeyOps,
-  module Chip8.Opcodes.Math,
-  module Chip8.Opcodes.Memory,
-  module Chip8.Opcodes.Timer
-) where
+  ( module Chip8.Opcodes.Assignment
+  , module Chip8.Opcodes.BitwiseOps
+  , module Chip8.Opcodes.Conditionals
+  , module Chip8.Opcodes.ConstantOps
+  , module Chip8.Opcodes.Display
+  , module Chip8.Opcodes.Flow
+  , module Chip8.Opcodes.KeyOps
+  , module Chip8.Opcodes.Math
+  , module Chip8.Opcodes.Memory
+  , module Chip8.Opcodes.Timer
+  ) where
 
 import Chip8.Opcodes.Assignment
 import Chip8.Opcodes.BitwiseOps

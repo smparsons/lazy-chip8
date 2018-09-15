@@ -1,24 +1,24 @@
 {-# LANGUAGE TemplateHaskell #-}
 
 module Chip8.Types
-( Chip8,
-  KeyPressState(..),
-  Chip8State(..),
-  currentOpcode,
-  memory,
-  vRegisters,
-  indexRegister,
-  programCounter,
-  graphics,
-  delayTimer,
-  soundTimer,
-  stack,
-  stackPointer,
-  keyState,
-  drawFlag,
-  audioFlag,
-  randomNumberSeed
-) where
+  ( Chip8
+  , KeyPressState(..)
+  , Chip8State(..)
+  , currentOpcode
+  , memory
+  , vRegisters
+  , indexRegister
+  , programCounter
+  , graphics
+  , delayTimer
+  , soundTimer
+  , stack
+  , stackPointer
+  , keyState
+  , drawFlag
+  , audioFlag
+  , randomNumberSeed
+  ) where
 
 import System.Random
 import Data.Word

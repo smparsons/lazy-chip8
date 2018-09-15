@@ -1,8 +1,8 @@
 module Chip8.Opcodes.Timer
-( setRegisterToDelayTimer,
-  setDelayTimerToRegister,
-  setSoundTimerToRegister 
-) where
+  ( setRegisterToDelayTimer
+  , setDelayTimerToRegister
+  , setSoundTimerToRegister 
+  ) where
 
 import qualified Data.Vector as V
 import Control.Monad.State

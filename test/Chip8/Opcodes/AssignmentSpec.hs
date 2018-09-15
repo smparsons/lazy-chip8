@@ -1,6 +1,6 @@
 module Chip8.Opcodes.AssignmentSpec 
-( spec
-) where
+  ( spec
+  ) where
 
 import Test.Hspec
 

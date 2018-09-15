@@ -1,6 +1,6 @@
 module Emulator.Types
-( Emulator
-) where
+  ( Emulator
+  ) where
 
 import Control.Monad.State
 

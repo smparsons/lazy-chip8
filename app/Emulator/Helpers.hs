@@ -1,6 +1,6 @@
 module Emulator.Helpers
-( hoist
-) where
+  ( hoist
+  ) where
 
 import Control.Monad.State
 

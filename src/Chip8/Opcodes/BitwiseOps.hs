@@ -1,11 +1,11 @@
 module Chip8.Opcodes.BitwiseOps
-( bitwiseOr,
-  bitwiseAnd,
-  randomBitwiseAnd,
-  bitwiseXor,
-  shiftRight,
-  shiftLeft
-) where
+  ( bitwiseOr
+  , bitwiseAnd
+  , randomBitwiseAnd
+  , bitwiseXor
+  , shiftRight
+  , shiftLeft
+  ) where
 
 import System.Random
 import Data.Word

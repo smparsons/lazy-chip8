@@ -1,8 +1,8 @@
 module Chip8.Opcodes.Math
-( addTwoRegisters,
-  subtractRegister,
-  subtractTwoRegisters
-) where
+  ( addTwoRegisters
+  , subtractRegister
+  , subtractTwoRegisters
+  ) where
 
 import qualified Data.Vector as V
 import Control.Monad.State

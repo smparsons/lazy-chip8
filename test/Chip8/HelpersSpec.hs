@@ -1,6 +1,6 @@
 module Chip8.HelpersSpec 
-( spec
-) where
+  ( spec
+  ) where
 
 import Test.Hspec
 import Data.Word

@@ -1,13 +1,13 @@
 module Chip8 
-( emulateCpuCycle,
-  initializeChip8,
-  loadFontsetIntoMemory,
-  loadGameIntoMemory,
-  getGraphicsAsByteString,
-  storeKeyPressChanges,
-  module Chip8.Constants,
-  module Chip8.Types
-) where
+  ( emulateCpuCycle
+  , initializeChip8
+  , loadFontsetIntoMemory
+  , loadGameIntoMemory
+  , getGraphicsAsByteString
+  , storeKeyPressChanges
+  , module Chip8.Constants
+  , module Chip8.Types
+  ) where
 
 import System.Random
 import Data.Word

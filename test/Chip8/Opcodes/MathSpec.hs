@@ -1,6 +1,6 @@
 module Chip8.Opcodes.MathSpec 
-( spec
-) where
+  ( spec
+  ) where
 
 import Test.Hspec
 

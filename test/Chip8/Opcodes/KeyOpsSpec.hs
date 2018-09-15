@@ -1,6 +1,6 @@
 module Chip8.Opcodes.KeyOpsSpec 
-( spec
-) where
+  ( spec
+  ) where
 
 import Test.Hspec
 

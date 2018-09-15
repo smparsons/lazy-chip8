@@ -1,7 +1,7 @@
 module Chip8.Opcodes.ConstantOps
-( setRegisterToConstant,
-  addConstantToRegister
-) where
+  ( setRegisterToConstant
+  , addConstantToRegister
+  ) where
 
 import qualified Data.Vector as V
 import Control.Monad.State

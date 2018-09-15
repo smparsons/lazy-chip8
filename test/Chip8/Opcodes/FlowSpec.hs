@@ -1,6 +1,6 @@
 module Chip8.Opcodes.FlowSpec 
-( spec
-) where
+  ( spec
+  ) where
 
 import Test.Hspec
 

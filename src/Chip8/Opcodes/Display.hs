@@ -1,7 +1,7 @@
 module Chip8.Opcodes.Display
-( clearScreen,
-  drawGraphics
-) where
+  ( clearScreen
+  , drawGraphics
+  ) where
 
 import qualified Data.Vector as V
 import Data.Bits

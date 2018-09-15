@@ -1,6 +1,6 @@
 module Emulator.Graphics
-( drawGraphicsIfNecessary
-) where
+  ( drawGraphicsIfNecessary
+  ) where
 
 import Control.Lens hiding (Context)
 import Control.Monad.State

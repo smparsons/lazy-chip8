@@ -1,7 +1,7 @@
 module Emulator.Audio 
-( createBeepSource,
-  playBeepIfNecessary
-) where
+  ( createBeepSource
+  , playBeepIfNecessary
+  ) where
 
 import Control.Lens
 import Control.Monad.State

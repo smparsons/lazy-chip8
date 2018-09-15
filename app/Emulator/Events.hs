@@ -1,7 +1,7 @@
 module Emulator.Events 
-( getKeyPressChanges,
-  isQuitEvent
-) where
+  ( getKeyPressChanges
+  , isQuitEvent
+  ) where
 
 import Data.Maybe
 import qualified SDL

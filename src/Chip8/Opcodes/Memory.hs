@@ -1,11 +1,11 @@
 module Chip8.Opcodes.Memory
-( setIndexRegisterToAddress,
-  addRegisterToIndexRegister,
-  registerDump,
-  registerLoad,
-  storeBCD,
-  storeSpriteLocation
-) where
+  ( setIndexRegisterToAddress
+  , addRegisterToIndexRegister
+  , registerDump
+  , registerLoad
+  , storeBCD
+  , storeSpriteLocation
+  ) where
 
 import qualified Data.Vector as V
 import Data.Word

@@ -1,6 +1,6 @@
 module Chip8.Opcodes.BitwiseOpsSpec 
-( spec
-) where
+  ( spec
+  ) where
 
 import Test.Hspec
 import System.Random
