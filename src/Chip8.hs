@@ -9,16 +9,15 @@ module Chip8
   , module Chip8.Types
   ) where
 
-import System.Random
-import Data.Word
-import qualified Data.Vector as V
-import Control.Monad.State
-import Control.Lens
-import qualified Data.ByteString as BS
-
 import Chip8.Constants
 import Chip8.Cpu
 import Chip8.Types
+import Control.Lens
+import Control.Monad.State
+import qualified Data.ByteString as BS
+import qualified Data.Vector as V
+import Data.Word
+import System.Random
 
 initializeChip8 :: StdGen -> Chip8 ()
 initializeChip8 newSeed = do 
