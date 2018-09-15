@@ -69,3 +69,12 @@ spec = do
     it "skips the next instruction" $ do
       let updatedState = execState skipNextInstruction chip8InitialState { _programCounter = 0x280 }
       (updatedState^.programCounter) `shouldBe` 0x284
+
+  describe "skipNextInstructionIf" $ do
+    it "skips the next instruction if the value passed in is True" $ do
+      let updatedState = execState (skipNextInstructionIf True) chip8InitialState { _programCounter = 0x3A0 }
+      (updatedState^.programCounter) `shouldBe` 0x3A4
+
+    it "continues to next instruction if the value passed in is False" $ do
+      let updatedState = execState (skipNextInstructionIf False) chip8InitialState { _programCounter = 0x3B0 }
+      (updatedState^.programCounter) `shouldBe` 0x3B2

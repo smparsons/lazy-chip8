@@ -17,7 +17,7 @@ registerEqualsConstant :: Chip8 ()
 registerEqualsConstant = do
   registerXValue <- getRegisterXValue
   constant <- parseTwoDigitConstant
-  if registerXValue == constant then skipNextInstruction else incrementProgramCounter
+  skipNextInstructionIf $ registerXValue == constant
 
 {-
   0x4XNN
@@ -28,7 +28,7 @@ registerDoesNotEqualConstant :: Chip8 ()
 registerDoesNotEqualConstant = do
   registerXValue <- getRegisterXValue
   constant <- parseTwoDigitConstant
-  if registerXValue /= constant then skipNextInstruction else incrementProgramCounter
+  skipNextInstructionIf $ registerXValue /= constant
 
 {-
   0x5XY0
@@ -39,7 +39,7 @@ registersAreEqual :: Chip8 ()
 registersAreEqual = do
   registerXValue <- getRegisterXValue
   registerYValue <- getRegisterYValue
-  if registerXValue == registerYValue then skipNextInstruction else incrementProgramCounter
+  skipNextInstructionIf $ registerXValue == registerYValue
 
 {-
   0x9XY0
@@ -50,4 +50,4 @@ registersAreNotEqual :: Chip8 ()
 registersAreNotEqual = do
   registerXValue <- getRegisterXValue
   registerYValue <- getRegisterYValue
-  if registerXValue /= registerYValue then skipNextInstruction else incrementProgramCounter
+  skipNextInstructionIf $ registerXValue /= registerYValue

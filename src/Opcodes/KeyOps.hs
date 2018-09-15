@@ -22,7 +22,7 @@ keyIsPressed = do
   chip8State <- get
   registerXValue <- fmap fromIntegral getRegisterXValue 
   let keyValue = (chip8State^.keyState) V.! registerXValue
-  if keyValue == Pressed then skipNextInstruction else incrementProgramCounter
+  skipNextInstructionIf $ keyValue == Pressed
 
 {-
   0xEXA1
@@ -34,7 +34,7 @@ keyIsNotPressed = do
   chip8State <- get
   registerXValue <- fmap fromIntegral getRegisterXValue
   let keyValue = (chip8State^.keyState) V.! registerXValue
-  if keyValue == Released then skipNextInstruction else incrementProgramCounter
+  skipNextInstructionIf $ keyValue == Released
 
 {-
   0xFX0A

@@ -7,7 +7,8 @@ module Helpers
   parseTwoDigitConstant,
   parseThreeDigitConstant,
   incrementProgramCounter,
-  skipNextInstruction
+  skipNextInstruction,
+  skipNextInstructionIf
 ) where
 
 import Data.Word
@@ -53,3 +54,6 @@ incrementProgramCounter = modify (\givenState -> givenState & programCounter +~ 
 
 skipNextInstruction :: Chip8 ()
 skipNextInstruction = modify (\givenState -> givenState & programCounter +~ (programCounterIncrement * 2))
+
+skipNextInstructionIf :: Bool -> Chip8 ()
+skipNextInstructionIf booleanValue = if booleanValue then skipNextInstruction else incrementProgramCounter
