@@ -4,7 +4,9 @@ module Chip8
   loadFontsetIntoMemory,
   loadGameIntoMemory,
   getGraphicsAsByteString,
-  storeKeyPressChanges
+  storeKeyPressChanges,
+  module Chip8.Constants,
+  module Chip8.Types
 ) where
 
 import System.Random
@@ -14,9 +16,9 @@ import Control.Monad.State
 import Control.Lens
 import qualified Data.ByteString as BS
 
-import Constants
-import Cpu
-import Types
+import Chip8.Constants
+import Chip8.Cpu
+import Chip8.Types
 
 initializeChip8 :: StdGen -> Chip8 ()
 initializeChip8 newSeed = do 

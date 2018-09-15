@@ -4,8 +4,6 @@ module Chip8Spec
 
 import Test.Hspec
 import Chip8
-import Types
-import Constants
 
 import qualified Data.Vector as V
 import Control.Monad.State
