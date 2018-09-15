@@ -4,13 +4,13 @@ This is my CHIP-8 emulator written in Haskell. Since I've become interested in e
 
 While developing this project, I used <a href="http://www.multigesture.net/articles/how-to-write-an-emulator-chip-8-interpreter/">this tutorial</a> to help me understand the basics of building a CHIP-8 emulator. I also used <a href="https://en.wikipedia.org/wiki/CHIP-8">this wikipedia page</a> which contains helpful documentation on each CHIP-8 opcode.
 
-## How To Run
+## How to Run
 
 You will need to have Stack setup first before you can run this project. Read <a href="https://docs.haskellstack.org/en/stable/README/">this documentation</a> to learn how to setup Stack.
 
 Note that this project has been developed and tested in Linux. I have not tested this project in either the Windows or Mac operating systems. 
 
-### Installing And Running
+### Installing and Running
 
 The following command will build the project and move the executable to the `~/.local/bin` folder:
 ```
@@ -22,7 +22,7 @@ You can then easily run the emulator from any directory:
 $ lazy-chip8 "the/path/to/your/rom"
 ```
 
-### Running During Development
+### Running during Development
 
 While developing locally, you can build and run the executable using the following stack commands:
 ```
