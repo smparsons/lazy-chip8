@@ -3,13 +3,11 @@ module Emulator.Audio
   , playBeepIfNecessary
   ) where
 
+import Chip8
 import Control.Lens
 import Control.Monad.State
-import Sound.ALUT
-
 import Emulator.Types
-
-import Chip8
+import Sound.ALUT
 
 createBeepSource :: IO Source
 createBeepSource = do

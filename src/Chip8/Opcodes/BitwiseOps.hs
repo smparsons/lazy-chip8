@@ -7,15 +7,14 @@ module Chip8.Opcodes.BitwiseOps
   , shiftLeft
   ) where
 
-import System.Random
-import Data.Word
-import Data.Bits
-import qualified Data.Vector as V
-import Control.Monad.State
-import Control.Lens
-
 import Chip8.Helpers
 import Chip8.Types
+import Control.Lens
+import Control.Monad.State
+import Data.Bits
+import qualified Data.Vector as V
+import Data.Word
+import System.Random
 
 {-
   0x8XY1

@@ -2,15 +2,13 @@ module Emulator.Graphics
   ( drawGraphicsIfNecessary
   ) where
 
+import Chip8
 import Control.Lens hiding (Context)
 import Control.Monad.State
-import Foreign.C.Types
-import SDL
-
 import Emulator.Helpers
 import Emulator.Types
-
-import Chip8
+import Foreign.C.Types
+import SDL
 
 drawGraphicsIfNecessary :: Renderer -> Texture -> Emulator Texture
 drawGraphicsIfNecessary renderer texture = do

@@ -2,12 +2,12 @@ module Chip8.CpuSpec
   ( spec
   ) where
 
-import Test.Hspec
 import Chip8
 import Chip8.Cpu
-import qualified Data.Vector as V
-import Control.Monad.State
 import Control.Lens
+import Control.Monad.State
+import qualified Data.Vector as V
+import Test.Hspec
 
 spec :: Spec
 spec = do

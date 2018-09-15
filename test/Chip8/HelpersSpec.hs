@@ -2,14 +2,13 @@ module Chip8.HelpersSpec
   ( spec
   ) where
 
-import Test.Hspec
-import Data.Word
-import qualified Data.Vector as V
-import Control.Monad.State
-import Control.Lens
-
 import Chip8
 import Chip8.Helpers
+import Control.Lens
+import Control.Monad.State
+import qualified Data.Vector as V
+import Data.Word
+import Test.Hspec
 
 emptyVRegisters :: V.Vector Word8
 emptyVRegisters = V.replicate 16 0x00

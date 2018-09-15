@@ -5,14 +5,13 @@ module Chip8.Opcodes.Flow
   , jumpToAddressPlusRegisterZero
   ) where
 
-import Data.Word
-import qualified Data.Vector as V
-import Control.Monad.State
-import Control.Lens
-
-import Chip8.Types
 import Chip8.Constants
 import Chip8.Helpers
+import Chip8.Types
+import Control.Lens
+import Control.Monad.State
+import qualified Data.Vector as V
+import Data.Word
 
 {-
   0x00EE

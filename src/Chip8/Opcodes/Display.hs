@@ -3,15 +3,15 @@ module Chip8.Opcodes.Display
   , drawGraphics
   ) where
 
-import qualified Data.Vector as V
-import Data.Bits
-import Data.Word
-import Control.Monad.State
-import Control.Lens
-
-import Chip8.Types
 import Chip8.Constants
 import Chip8.Helpers
+import Chip8.Types
+import Control.Monad.State
+import Control.Lens
+import Data.Bits
+import qualified Data.Vector as V
+import Data.Word
+
 
 {-
   0x00E0

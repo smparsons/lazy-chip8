@@ -6,14 +6,13 @@ module Chip8.Cpu
   , decrementSoundTimer
   ) where
 
-import Data.Word
-import Data.Bits
-import qualified Data.Vector as V
+import Chip8.Opcodes
+import Chip8.Types
 import Control.Monad.State
 import Control.Lens
-
-import Chip8.Types
-import Chip8.Opcodes
+import Data.Bits
+import qualified Data.Vector as V
+import Data.Word
 
 executeOpcode :: Chip8 ()
 executeOpcode = do

@@ -2,17 +2,16 @@
 
 module Main where
 
+import Chip8
 import Control.Monad (unless)
 import Control.Monad.State
 import Control.Concurrent
 import qualified Data.ByteString as BS
+import Emulator
 import SDL
 import Sound.ALUT
 import System.Environment
 import System.Random
-
-import Emulator
-import Chip8
 
 main :: IO ()
 main = do

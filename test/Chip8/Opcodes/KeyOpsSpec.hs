@@ -2,13 +2,12 @@ module Chip8.Opcodes.KeyOpsSpec
   ( spec
   ) where
 
-import Test.Hspec
-
-import Chip8.Opcodes.KeyOps
 import Chip8
-import qualified Data.Vector as V
-import Control.Monad.State
+import Chip8.Opcodes.KeyOps
 import Control.Lens
+import Control.Monad.State
+import qualified Data.Vector as V
+import Test.Hspec
 
 spec :: Spec
 spec = do

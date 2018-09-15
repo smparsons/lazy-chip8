@@ -11,14 +11,13 @@ module Chip8.Helpers
   , skipNextInstructionIf
   ) where
 
-import Data.Word
+import Chip8.Constants
+import Chip8.Types
+import Control.Lens
+import Control.Monad.State
 import Data.Bits
 import qualified Data.Vector as V
-import Control.Monad.State
-import Control.Lens
-
-import Chip8.Types
-import Chip8.Constants
+import Data.Word
 
 parseRegisterXNumber :: Chip8 Int 
 parseRegisterXNumber = 

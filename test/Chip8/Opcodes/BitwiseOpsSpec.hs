@@ -2,14 +2,13 @@ module Chip8.Opcodes.BitwiseOpsSpec
   ( spec
   ) where
 
-import Test.Hspec
-import System.Random
-
-import Chip8.Opcodes.BitwiseOps
 import Chip8
-import qualified Data.Vector as V
-import Control.Monad.State
+import Chip8.Opcodes.BitwiseOps
 import Control.Lens
+import Control.Monad.State
+import qualified Data.Vector as V
+import System.Random
+import Test.Hspec
 
 spec :: Spec
 spec = do

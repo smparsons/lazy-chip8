@@ -7,11 +7,10 @@ module Chip8.Constants
   , chip8Fontset
   ) where
 
-import System.Random
+import Chip8.Types
 import qualified Data.Vector as V
 import Data.Word
-
-import Chip8.Types
+import System.Random
 
 programCounterIncrement :: Word16
 programCounterIncrement = 0x0002

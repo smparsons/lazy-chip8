@@ -4,12 +4,11 @@ module Chip8.Opcodes.Math
   , subtractTwoRegisters
   ) where
 
-import qualified Data.Vector as V
-import Control.Monad.State
-import Control.Lens
-
 import Chip8.Helpers
 import Chip8.Types
+import Control.Lens
+import Control.Monad.State
+import qualified Data.Vector as V
 
 {-
   0x8XY4

@@ -20,11 +20,11 @@ module Chip8.Types
   , randomNumberSeed
   ) where
 
-import System.Random
-import Data.Word
-import qualified Data.Vector as V
-import Control.Monad.State
 import Control.Lens
+import Control.Monad.State
+import qualified Data.Vector as V
+import Data.Word
+import System.Random
 
 data KeyPressState 
   = Pressed 

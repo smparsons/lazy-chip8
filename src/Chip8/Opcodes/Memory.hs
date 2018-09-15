@@ -7,13 +7,12 @@ module Chip8.Opcodes.Memory
   , storeSpriteLocation
   ) where
 
-import qualified Data.Vector as V
-import Data.Word
-import Control.Monad.State
-import Control.Lens
-
 import Chip8.Helpers
 import Chip8.Types
+import Control.Lens
+import Control.Monad.State
+import qualified Data.Vector as V
+import Data.Word
 
 {-
   0xANNN

@@ -3,10 +3,9 @@ module Emulator.Events
   , isQuitEvent
   ) where
 
+import Chip8
 import Data.Maybe
 import qualified SDL
-
-import Chip8
 
 getKeyPressChanges :: [SDL.Event] -> [(Int, KeyPressState)]
 getKeyPressChanges = catMaybes . map getMappedKeyPressAndMotion 
