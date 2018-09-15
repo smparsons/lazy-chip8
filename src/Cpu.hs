@@ -67,34 +67,31 @@ executeOpcode = do
 
 extractOpcodeFromMemory :: Chip8 ()
 extractOpcodeFromMemory = do
-  chip8State <- get
-  let memoryIndex = (fromIntegral $ chip8State^.programCounter) :: Int
-      opcodeFirstHalf = (fromIntegral $ (chip8State^.memory) V.! memoryIndex) :: Word16
-      opcodeSecondHalf = (fromIntegral $ (chip8State^.memory) V.! (memoryIndex + 1)) :: Word16
+  currentMemoryState <- gets (\chip8State -> chip8State^.memory)
+  memoryIndex <- fmap fromIntegral $ gets (\chip8State -> chip8State^.programCounter)
+  let opcodeFirstHalf = (fromIntegral $ currentMemoryState V.! memoryIndex) :: Word16
+      opcodeSecondHalf = (fromIntegral $ currentMemoryState V.! (memoryIndex + 1)) :: Word16
       leftShiftedOpcodeFirstHalf = opcodeFirstHalf `shiftL` 8
   modify (\givenState -> givenState & currentOpcode .~ (leftShiftedOpcodeFirstHalf .|. opcodeSecondHalf))
 
 parseDigitsFromOpcode :: Chip8 (Word16, Word16, Word16)
 parseDigitsFromOpcode = do
-  chip8State <- get
-  let opcode = chip8State^.currentOpcode
-      firstDigit = (opcode .&. 0xF000) `shiftR` 12
+  opcode <- gets (\chip8State -> chip8State^.currentOpcode)
+  let firstDigit = (opcode .&. 0xF000) `shiftR` 12
       thirdDigit = (opcode .&. 0x00F0) `shiftR` 4
       lastDigit = opcode .&. 0x000F
   return (firstDigit, thirdDigit, lastDigit)
 
 decrementDelayTimer :: Chip8 ()
 decrementDelayTimer = do 
-  chip8State <- get
-  let originalDelayTimer = chip8State^.delayTimer
-      newDelayTimer = if originalDelayTimer > 0 then originalDelayTimer - 1 else originalDelayTimer
+  originalDelayTimer <- gets (\chip8State -> chip8State^.delayTimer)
+  let newDelayTimer = if originalDelayTimer > 0 then originalDelayTimer - 1 else originalDelayTimer
   modify (\givenState -> givenState & delayTimer .~ newDelayTimer)    
 
 decrementSoundTimer :: Chip8 ()
 decrementSoundTimer = do
-  chip8State <- get
-  let originalSoundTimer = chip8State^.soundTimer
-      shouldPlaySound = originalSoundTimer == 1
+  originalSoundTimer <- gets (\chip8State -> chip8State^.soundTimer)
+  let shouldPlaySound = originalSoundTimer == 1
       newSoundTimer = if originalSoundTimer > 0 then originalSoundTimer - 1 else originalSoundTimer
   modify (\givenState -> givenState & audioFlag .~ shouldPlaySound)
   modify (\givenState -> givenState & soundTimer .~ newSoundTimer)

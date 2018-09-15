@@ -19,10 +19,10 @@ import Types
 -}
 keyIsPressed :: Chip8 ()
 keyIsPressed = do
-  chip8State <- get
+  currentKeyState <- gets (\chip8State -> chip8State^.keyState)
   registerXValue <- fmap fromIntegral getRegisterXValue 
-  let keyValue = (chip8State^.keyState) V.! registerXValue
-  skipNextInstructionIf $ keyValue == Pressed
+  let keyMotion = currentKeyState V.! registerXValue
+  skipNextInstructionIf $ keyMotion == Pressed
 
 {-
   0xEXA1
@@ -31,10 +31,10 @@ keyIsPressed = do
 -}
 keyIsNotPressed :: Chip8 ()
 keyIsNotPressed = do
-  chip8State <- get
+  currentKeyState <- gets (\chip8State -> chip8State^.keyState)
   registerXValue <- fmap fromIntegral getRegisterXValue
-  let keyValue = (chip8State^.keyState) V.! registerXValue
-  skipNextInstructionIf $ keyValue == Released
+  let keyMotion = currentKeyState V.! registerXValue
+  skipNextInstructionIf $ keyMotion == Released
 
 {-
   0xFX0A
@@ -43,9 +43,9 @@ keyIsNotPressed = do
 -}
 awaitKeyPress :: Chip8 ()
 awaitKeyPress = do
-  chip8State <- get
+  currentKeyState <- gets (\chip8State -> chip8State^.keyState)
   registerX <- parseRegisterXNumber
-  let pressedKey = V.findIndex (\key -> key == Pressed) (chip8State^.keyState)
+  let pressedKey = V.findIndex (\key -> key == Pressed) currentKeyState
   case pressedKey of
     Nothing -> return ()
     Just key -> do

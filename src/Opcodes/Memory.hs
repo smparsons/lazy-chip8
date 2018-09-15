@@ -43,11 +43,11 @@ addRegisterToIndexRegister = do
 -}
 registerDump :: Chip8 ()
 registerDump = do
-  chip8State <- get
+  currentRegisterState <- gets (\chip8State -> chip8State^.vRegisters)
+  currentIndexRegister <- fmap fromIntegral $ gets (\chip8State -> chip8State^.indexRegister)
   registerXNumber <- parseRegisterXNumber
-  let registersToProcess = V.slice 0 (registerXNumber + 1) (chip8State^.vRegisters)
-      convertedIndexRegister = (fromIntegral $ chip8State^.indexRegister) :: Int
-      mapMemoryAddressAndValue = (\currentIndex registerValue -> (convertedIndexRegister + currentIndex, registerValue))
+  let registersToProcess = V.slice 0 (registerXNumber + 1) currentRegisterState
+      mapMemoryAddressAndValue = (\currentIndex registerValue -> (currentIndexRegister + currentIndex, registerValue))
       registerValuesToDump = V.imap mapMemoryAddressAndValue registersToProcess
       dumpRegisters = flip V.update registerValuesToDump
   modify (\givenState -> givenState & memory %~ dumpRegisters)
@@ -60,10 +60,10 @@ registerDump = do
 -}
 registerLoad :: Chip8 ()
 registerLoad = do
-  chip8State <- get
+  currentMemoryState <- gets (\chip8State -> chip8State^.memory)
+  currentIndexRegister <- fmap fromIntegral $ gets (\chip8State -> chip8State^.indexRegister)
   registerXNumber <- parseRegisterXNumber
-  let convertedIndexRegister = (fromIntegral $ chip8State^.indexRegister) :: Int
-      memoryValuesToProcess = V.slice convertedIndexRegister (registerXNumber + 1) (chip8State^.memory)
+  let memoryValuesToProcess = V.slice currentIndexRegister (registerXNumber + 1) currentMemoryState
       mapRegisterAndValue = (\currentIndex memoryValue -> (currentIndex, memoryValue))
       memoryValuesToLoad = V.imap mapRegisterAndValue memoryValuesToProcess
       loadMemory = flip V.update memoryValuesToLoad
@@ -79,13 +79,12 @@ registerLoad = do
 -}
 storeBCD :: Chip8 ()
 storeBCD = do
-  chip8State <- get
+  currentIndexRegister <- fmap fromIntegral $ gets (\chip8State -> chip8State^.indexRegister)
   registerXValue <- getRegisterXValue
-  let convertedIndexRegister = (fromIntegral $ chip8State^.indexRegister) :: Int
-      memoryModifications = V.fromList
-       [ (convertedIndexRegister, registerXValue `div` 100)
-       , (convertedIndexRegister + 1, (registerXValue `div` 10) `mod` 10)
-       , (convertedIndexRegister + 2, (registerXValue `mod` 100) `mod` 10) ]
+  let memoryModifications = V.fromList
+        [ (currentIndexRegister, registerXValue `div` 100)
+        , (currentIndexRegister + 1, (registerXValue `div` 10) `mod` 10)
+        , (currentIndexRegister + 2, (registerXValue `mod` 100) `mod` 10) ]
       updateMemory = flip V.update memoryModifications
   modify (\givenState -> givenState & memory %~ updateMemory)
   incrementProgramCounter 

@@ -51,11 +51,10 @@ bitwiseAnd = do
 -}
 randomBitwiseAnd :: Chip8 ()
 randomBitwiseAnd = do
-  chip8State <- get
+  randomResultTuple <- fmap (randomR (0, 255)) (gets (\chip8State -> chip8State^.randomNumberSeed))
   registerX <- parseRegisterXNumber
   constant <- parseTwoDigitConstant
-  let randomResultTuple = randomR (0, 255) (chip8State^.randomNumberSeed)
-      randomValue = fst randomResultTuple :: Word8
+  let randomValue = fst randomResultTuple :: Word8
       newSeed = snd randomResultTuple
       bitwiseAndResult = constant .&. randomValue
       storeBitwiseAndResult = flip V.update $ V.fromList [(registerX,bitwiseAndResult)]

@@ -20,8 +20,8 @@ import Helpers
 -}
 returnFromSubroutine :: Chip8 ()
 returnFromSubroutine = do
-  chip8State <- get
-  let lastAddress = V.last $ chip8State^.stack
+  currentStackState <- gets (\chip8State -> chip8State^.stack)
+  let lastAddress = V.last currentStackState
   modify (\givenState -> givenState & stack %~ V.init)
   modify (\givenState -> givenState & stackPointer -~ 1)
   let newAddress = lastAddress + programCounterIncrement 
@@ -42,8 +42,8 @@ jumpToAddress = do
 -}
 callSubroutine :: Chip8 ()
 callSubroutine = do
-  chip8State <- get
-  let storeAddressInStack = flip V.snoc $ chip8State^.programCounter  
+  currentProgramCounter <- gets (\chip8State -> chip8State^.programCounter)
+  let storeAddressInStack = flip V.snoc currentProgramCounter 
   modify (\givenState -> givenState & stack %~ storeAddressInStack)
   modify (\givenState -> givenState & stackPointer +~ 1)
   newAddress <- parseThreeDigitConstant
@@ -55,9 +55,9 @@ callSubroutine = do
 -}
 jumpToAddressPlusRegisterZero :: Chip8 () 
 jumpToAddressPlusRegisterZero = do
-  chip8State <- get
+  currentRegisterState <- gets (\chip8State -> chip8State^.vRegisters)
   constant <- parseThreeDigitConstant
-  let registerZeroValue = (chip8State^.vRegisters) V.! 0x0
+  let registerZeroValue = currentRegisterState V.! 0x0
       convertedRegisterValue = fromIntegral registerZeroValue :: Word16
       newAddress = constant + convertedRegisterValue
   modify (\givenState -> givenState & programCounter .~ newAddress)

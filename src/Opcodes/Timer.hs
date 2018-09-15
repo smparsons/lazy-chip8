@@ -17,9 +17,9 @@ import Types
 -}
 setRegisterToDelayTimer :: Chip8 ()
 setRegisterToDelayTimer = do
-  chip8State <- get
+  currentDelayTimer <- gets (\chip8State -> chip8State^.delayTimer)
   registerX <- parseRegisterXNumber
-  let updateRegisterX = flip V.update $ V.fromList [(registerX, chip8State^.delayTimer)]
+  let updateRegisterX = flip V.update $ V.fromList [(registerX, currentDelayTimer)]
   modify (\givenState -> givenState & vRegisters %~ updateRegisterX)
   incrementProgramCounter
 
