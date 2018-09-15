@@ -12,7 +12,6 @@ import Data.Bits
 import qualified Data.Vector as V
 import Data.Word
 
-
 {-
   0x00E0
   Clears the screen.
